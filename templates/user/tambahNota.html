@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Sani Laundry</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
+
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              primary: '#135bec',
+              'background-light': '#f6f6f8',
+              'background-dark': '#101622'
+            },
+            fontFamily: {
+              display: ['Inter']
+            },
+            borderRadius: { DEFAULT: '0.25rem', lg: '0.5rem', xl: '0.75rem', full: '9999px' }
+          }
+        }
+      }
+    </script>
+
+    <style>
+      body {
+        font-family: 'Inter', sans-serif;
+      }
+      .material-symbols-outlined {
+        font-size: 20px;
+      }
+    </style>
+  </head>
+
+  <body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display">
+    <div class="relative flex h-auto min-h-screen w-full flex-col overflow-x-hidden">
+      <!-- Top Navigation Bar -->
+      <header class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-6 py-3 sticky top-0 z-50">
+
+        <!-- LEFT -->
+        <div class="flex items-center gap-4">
+
+            <!-- HAMBURGER -->
+            <button id="hamburgerBtn" class="md:hidden p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">
+            <span class="material-symbols-outlined">menu</span>
+            </button>
+
+            <!-- LOGO -->
+            <div class="flex items-center gap-4 text-primary">
+            <div class="size-8 bg-primary/10 rounded-lg flex items-center justify-center">
+                <span class="material-symbols-outlined text-primary">local_laundry_service</span>
+            </div>
+
+            <h2 class="text-slate-900 dark:text-white text-lg font-bold">
+                LaundryPro
+            </h2>
+            </div>
+
+        </div>
+
+
+        <!-- DESKTOP MENU -->
+        <nav class="hidden md:flex items-center gap-6">
+            <a class="text-slate-600 dark:text-slate-400 text-sm font-medium hover:text-primary transition-colors" href="#">Dashboard</a>
+            <a class="text-primary text-sm font-semibold border-b-2 border-primary pb-1" href="#">New Order</a>
+            <a class="text-slate-600 dark:text-slate-400 text-sm font-medium hover:text-primary transition-colors" href="#">Orders</a>
+            <a class="text-slate-600 dark:text-slate-400 text-sm font-medium hover:text-primary transition-colors" href="#">Inventory</a>
+        </nav>
+
+
+        <!-- RIGHT -->
+        <div class="flex items-center gap-4">
+
+            <button class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800">
+            <span class="material-symbols-outlined">notifications</span>
+            </button>
+
+            <div class="size-10 rounded-full bg-primary flex items-center justify-center text-white font-bold text-xs">
+            AR
+            </div>
+
+        </div>
+
+    </header>
+
+    <!-- MOBILE MENU -->
+    <div id="mobileMenu"
+    class="hidden md:hidden border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+
+    <nav class="flex flex-col p-4 gap-4">
+
+        <a class="text-slate-700 dark:text-slate-300 font-medium hover:text-primary">
+        Dashboard
+        </a>
+
+        <a class="text-slate-700 dark:text-slate-300 font-medium hover:text-primary">
+        New Order
+        </a>
+
+        <a class="text-slate-700 dark:text-slate-300 font-medium hover:text-primary">
+        Orders
+        </a>
+
+        <a class="text-slate-700 dark:text-slate-300 font-medium hover:text-primary">
+        Inventory
+        </a>
+
+    </nav>
+
+    </div>
+
+      <main class="flex-1 flex flex-col lg:flex-row max-w-[1600px] mx-auto w-full p-6 gap-6">
+        <!-- Sidebar: Customer Selection -->
+        <aside class="w-full lg:w-80 flex flex-col gap-6">
+          <div class="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-5">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary">person_search</span>
+                Nota Pelanggan
+              </h3>
+              <button class="text-primary text-xs font-bold hover:underline">+ New</button>
+            </div>
+            <div class="space-y-4">
+              <div class="relative">
+                <input class="w-full h-10 pl-3 pr-4 bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:border-primary focus:ring-primary" placeholder="Search by name or phone..." type="text" />
+              </div>
+              <div class="space-y-2">
+                <!-- Active Selected Customer -->
+                <div class="p-3 bg-primary/5 border border-primary/20 rounded-lg">
+                  <div class="flex items-center gap-3">
+                    <div class="size-10 rounded-full bg-primary/20 flex items-center justify-center">
+                      <span class="material-symbols-outlined text-primary">person</span>
+                    </div>
+                    <div>
+                      <p class="text-sm font-bold text-slate-900 dark:text-white">Sarah Jenkins</p>
+                      <p class="text-xs text-slate-500">+1 555-0123</p>
+                    </div>
+                  </div>
+                  <div class="mt-3 pt-3 border-t border-primary/10 flex justify-between items-center">
+                    <span class="text-[10px] uppercase font-bold text-primary tracking-wider">Premium Member</span>
+                    <span class="text-[10px] text-slate-400">ID: #4492</span>
+                  </div>
+                </div>
+                <!-- Recent Suggestions -->
+                <p class="text-[10px] font-bold text-slate-400 uppercase pt-2">Recent Customers</p>
+                <div class="flex flex-col gap-1">
+                  <button class="flex items-center gap-3 p-2 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg transition-colors text-left">
+                    <div class="size-8 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-xs">MB</div>
+                    <div>
+                      <p class="text-xs font-medium text-slate-700 dark:text-slate-300">Marcus Brown</p>
+                      <p class="text-[10px] text-slate-500">555-0199</p>
+                    </div>
+                  </button>
+                  <button class="flex items-center gap-3 p-2 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg transition-colors text-left">
+                    <div class="size-8 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-xs">LW</div>
+                    <div>
+                      <p class="text-xs font-medium text-slate-700 dark:text-slate-300">Linda White</p>
+                      <p class="text-[10px] text-slate-500">555-0142</p>
+                    </div>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Loyalty / Notes Section -->
+          <div class="bg-gradient-to-br from-primary to-blue-700 rounded-xl p-5 text-white shadow-lg shadow-primary/20">
+            <div class="flex justify-between items-start mb-4">
+              <span class="material-symbols-outlined bg-white/20 p-2 rounded-lg">loyalty</span>
+              <span class="text-[10px] font-bold bg-white/20 px-2 py-1 rounded">LOYALTY STATUS</span>
+            </div>
+            <h4 class="text-lg font-bold">1,240 Points</h4>
+            <p class="text-xs text-white/80 mt-1">Sarah is eligible for a 15% discount on dry cleaning today!</p>
+            <button class="mt-4 w-full py-2 bg-white text-primary text-xs font-bold rounded-lg hover:bg-slate-100 transition-colors">Apply Reward</button>
+          </div>
+        </aside>
+        <!-- Main Form Area -->
+        <div class="flex-1 flex flex-col gap-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <h1 class="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Create Receipt</h1>
+              <p class="text-slate-500 text-sm">Transaction #REC-2023-08-012</p>
+            </div>
+            <div class="flex gap-3">
+              <button class="px-4 py-2 text-slate-600 dark:text-slate-400 font-bold text-sm hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors">Discard</button>
+              <button class="px-6 py-2 bg-primary text-white font-bold text-sm rounded-lg hover:opacity-90 transition-opacity shadow-lg shadow-primary/30">Process Order</button>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 gap-6">
+            <!-- Card 1: Service Configuration -->
+            <div class="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
+              <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/50">
+                <h3 class="font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                  <span class="material-symbols-outlined text-primary">settings_applications</span>
+                  Order Details
+                </h3>
+                <div class="flex items-center gap-4">
+                  <label class="flex items-center gap-2 cursor-pointer">
+                    <input class="rounded text-primary focus:ring-primary" type="checkbox" />
+                    <span class="text-xs font-medium text-slate-600 dark:text-slate-400">Express Delivery</span>
+                  </label>
+                </div>
+              </div>
+              <div class="p-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                  <div class="space-y-2">
+                    <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Service Type</label>
+                    <select class="w-full h-11 bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:border-primary focus:ring-primary">
+                      <option>Standard Wash &amp; Fold</option>
+                      <option>Dry Cleaning</option>
+                      <option>Ironing Only</option>
+                      <option>Full Premium Treatment</option>
+                    </select>
+                  </div>
+                  <div class="space-y-2">
+                    <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Estimated Date</label>
+                    <div class="relative">
+                      <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">calendar_today</span>
+                      <input class="w-full h-11 pl-10 bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:border-primary focus:ring-primary" type="date" value="2023-10-27" />
+                    </div>
+                  </div>
+                  <div class="space-y-2">
+                    <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Priority</label>
+                    <div class="flex gap-2">
+                      <button class="flex-1 py-2 text-xs font-bold border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 text-slate-500">Normal</button>
+                      <button class="flex-1 py-2 text-xs font-bold border-2 border-primary rounded-lg bg-primary/10 text-primary">Urgent</button>
+                    </div>
+                  </div>
+                </div>
+                <!-- Itemized Table -->
+                <div class="overflow-x-auto">
+                  <table class="w-full border-collapse">
+                    <thead>
+                      <tr class="text-left border-b border-slate-100 dark:border-slate-800">
+                        <th class="pb-3 text-xs font-bold text-slate-400 uppercase tracking-wider w-2/5">Item Description</th>
+                        <th class="pb-3 text-xs font-bold text-slate-400 uppercase tracking-wider">Quantity</th>
+                        <th class="pb-3 text-xs font-bold text-slate-400 uppercase tracking-wider">Unit Price</th>
+                        <th class="pb-3 text-xs font-bold text-slate-400 uppercase tracking-wider">Subtotal</th>
+                        <th class="pb-3 w-10"></th>
+                      </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-50 dark:divide-slate-800">
+                      <tr>
+                        <td class="py-4 pr-4">
+                          <input class="w-full h-10 bg-transparent border-none focus:ring-0 text-sm font-medium" placeholder="Ex: Suit Jackets" type="text" value="Cotton T-Shirts" />
+                        </td>
+                        <td class="py-4">
+                          <div class="flex items-center">
+                            <button class="size-8 rounded border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-500 hover:bg-slate-50">-</button>
+                            <input class="w-12 h-10 text-center border-none bg-transparent focus:ring-0 text-sm" type="number" value="12" />
+                            <button class="size-8 rounded border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-500 hover:bg-slate-50">+</button>
+                          </div>
+                        </td>
+                        <td class="py-4 text-sm font-medium">$1.50</td>
+                        <td class="py-4 text-sm font-bold">$18.00</td>
+                        <td class="py-4 text-right">
+                          <button class="text-slate-300 hover:text-red-500 transition-colors"><span class="material-symbols-outlined">delete</span></button>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="py-4 pr-4">
+                          <input class="w-full h-10 bg-transparent border-none focus:ring-0 text-sm font-medium" placeholder="Item description" type="text" value="Denim Jeans" />
+                        </td>
+                        <td class="py-4">
+                          <div class="flex items-center">
+                            <button class="size-8 rounded border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-500 hover:bg-slate-50">-</button>
+                            <input class="w-12 h-10 text-center border-none bg-transparent focus:ring-0 text-sm" type="number" value="4" />
+                            <button class="size-8 rounded border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-500 hover:bg-slate-50">+</button>
+                          </div>
+                        </td>
+                        <td class="py-4 text-sm font-medium">$3.00</td>
+                        <td class="py-4 text-sm font-bold">$12.00</td>
+                        <td class="py-4 text-right">
+                          <button class="text-slate-300 hover:text-red-500 transition-colors"><span class="material-symbols-outlined">delete</span></button>
+                        </td>
+                      </tr>
+                      <!-- Add New Row -->
+                      <tr class="bg-slate-50/50 dark:bg-slate-800/30">
+                        <td class="py-4 pr-4 pl-2">
+                          <input class="w-full h-10 bg-transparent border-none focus:ring-0 text-sm italic" placeholder="Add new item..." type="text" />
+                        </td>
+                        <td class="py-4">
+                          <div class="flex items-center">
+                            <button class="size-8 rounded border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-500 opacity-50">-</button>
+                            <input class="w-12 h-10 text-center border-none bg-transparent focus:ring-0 text-sm" placeholder="0" type="number" />
+                            <button class="size-8 rounded border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-500 opacity-50">+</button>
+                          </div>
+                        </td>
+                        <td class="py-4 text-sm text-slate-400">0.00</td>
+                        <td class="py-4 text-sm text-slate-400">0.00</td>
+                        <td class="py-4 text-right">
+                          <button class="text-primary hover:opacity-80"><span class="material-symbols-outlined">add_circle</span></button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <!-- Additional Services / Notes -->
+              <div class="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 flex flex-col">
+                <h3 class="font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                  <span class="material-symbols-outlined text-primary">notes</span>
+                  Special Instructions
+                </h3>
+                <textarea class="flex-1 w-full bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-lg text-sm p-4 focus:border-primary focus:ring-primary min-h-[120px]" placeholder="Add notes about stains, fabric care, or folding preferences..."></textarea>
+              </div>
+              <!-- Summary Card -->
+              <div class="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6">
+                <h3 class="font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2">
+                  <span class="material-symbols-outlined text-primary">receipt_long</span>
+                  Payment Summary
+                </h3>
+                <div class="space-y-4">
+                  <div class="flex justify-between text-sm">
+                    <span class="text-slate-500">Subtotal (16 items)</span>
+                    <span class="font-semibold text-slate-900 dark:text-white">$30.00</span>
+                  </div>
+                  <div class="flex justify-between text-sm">
+                    <span class="text-slate-500">Service Charge</span>
+                    <span class="font-semibold text-slate-900 dark:text-white">$2.50</span>
+                  </div>
+                  <div class="flex justify-between text-sm text-green-600 dark:text-green-500">
+                    <span class="flex items-center gap-1 font-medium">Discount (Loyalty Reward)</span>
+                    <span class="font-bold">-$4.50</span>
+                  </div>
+                  <div class="flex justify-between text-sm">
+                    <span class="text-slate-500">Tax (8%)</span>
+                    <span class="font-semibold text-slate-900 dark:text-white">$2.24</span>
+                  </div>
+                  <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-between items-end">
+                    <div>
+                      <p class="text-xs font-bold text-slate-400 uppercase">Total Amount</p>
+                      <p class="text-3xl font-black text-primary">$30.24</p>
+                    </div>
+                    <div class="flex flex-col items-end">
+                      <p class="text-[10px] text-slate-400 mb-1">Payment Method</p>
+                      <div class="flex gap-2">
+                        <button class="px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 border-primary border"><span class="material-symbols-outlined text-xs">payments</span></button>
+                        <button class="px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 border-transparent border"><span class="material-symbols-outlined text-xs">credit_card</span></button>
+                        <button class="px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 border-transparent border"><span class="material-symbols-outlined text-xs">account_balance_wallet</span></button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+      <!-- Floating Quick Actions (Mobile/Tablet Only) -->
+      <div class="fixed bottom-6 right-6 lg:hidden">
+        <button class="size-14 rounded-full bg-primary text-white shadow-xl flex items-center justify-center"><span class="material-symbols-outlined">add</span></button>
+      </div>
+    </div>
+    
+    <script>
+
+    const btn = document.getElementById("hamburgerBtn")
+    const menu = document.getElementById("mobileMenu")
+
+    btn.addEventListener("click", () => {
+    menu.classList.toggle("hidden")
+    })
+
+    </script>
+  </body>
+</html>

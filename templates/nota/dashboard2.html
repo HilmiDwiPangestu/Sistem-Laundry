@@ -1,0 +1,309 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+    {% comment %} <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous"> {% endcomment %}
+{% endblock %}
+
+{% block subtitle %}Data Balita{% endblock %}
+
+{% block content %}
+
+<!-- KPI Section -->
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-primary/10 shadow-sm">
+              <div class="flex items-center justify-between mb-2">
+                <p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Daily Revenue</p>
+                <span class="material-symbols-outlined text-primary bg-primary/10 p-1.5 rounded-lg">payments</span>
+              </div>
+              <h3 class="text-2xl font-bold">$2,840.45</h3>
+              <p class="text-green-500 text-xs font-bold mt-2 flex items-center gap-1">
+                <span class="material-symbols-outlined text-[14px]">trending_up</span> +14.2% from yesterday
+              </p>
+            </div>
+            <div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-primary/10 shadow-sm">
+              <div class="flex items-center justify-between mb-2">
+                <p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Active Orders</p>
+                <span class="material-symbols-outlined text-orange-500 bg-orange-500/10 p-1.5 rounded-lg">cycle</span>
+              </div>
+              <h3 class="text-2xl font-bold">142</h3>
+              <p class="text-slate-500 text-xs font-bold mt-2 flex items-center gap-1">Currently in process</p>
+            </div>
+            <div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-primary/10 shadow-sm">
+              <div class="flex items-center justify-between mb-2">
+                <p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Avg. Wait Time</p>
+                <span class="material-symbols-outlined text-purple-500 bg-purple-500/10 p-1.5 rounded-lg">schedule</span>
+              </div>
+              <h3 class="text-2xl font-bold">4.2 hrs</h3>
+              <p class="text-red-500 text-xs font-bold mt-2 flex items-center gap-1">
+                <span class="material-symbols-outlined text-[14px]">trending_up</span> +12m increase
+              </p>
+            </div>
+            <div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-primary/10 shadow-sm">
+              <div class="flex items-center justify-between mb-2">
+                <p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Fleet Efficiency</p>
+                <span class="material-symbols-outlined text-green-500 bg-green-500/10 p-1.5 rounded-lg">local_shipping</span>
+              </div>
+              <h3 class="text-2xl font-bold">94.8%</h3>
+              <p class="text-green-500 text-xs font-bold mt-2 flex items-center gap-1">
+                <span class="material-symbols-outlined text-[14px]">check_circle</span> Optimized routes
+              </p>
+            </div>
+          </div>
+          <!-- Visualization Row -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- Donut Chart Card -->
+            <div class="lg:col-span-4 bg-white dark:bg-slate-900 p-6 rounded-xl border border-primary/10 shadow-sm flex flex-col">
+              <div class="flex items-center justify-between mb-6">
+                <h4 class="font-bold">Order Status Distribution</h4>
+                <button class="material-symbols-outlined text-slate-400">more_vert</button>
+              </div>
+              <div class="flex-1 flex flex-col items-center justify-center py-4">
+                <div class="relative w-48 h-48">
+                  <svg class="w-full h-full transform -rotate-90" viewbox="0 0 100 100">
+                    <circle class="text-slate-100 dark:text-slate-800" cx="50" cy="50" fill="transparent" r="40" stroke="currentColor" stroke-width="12"></circle>
+                    <!-- Wash -->
+                    <circle class="text-blue-500" cx="50" cy="50" fill="transparent" r="40" stroke="currentColor" stroke-dasharray="251.2" stroke-dashoffset="62.8" stroke-linecap="round" stroke-width="12"></circle>
+                    <!-- Dry -->
+                    <circle class="text-indigo-600" cx="50" cy="50" fill="transparent" r="40" stroke="currentColor" stroke-dasharray="251.2" stroke-dashoffset="188.4" stroke-linecap="round" stroke-width="12"></circle>
+                    <!-- Fold -->
+                    <circle class="text-primary" cx="50" cy="50" fill="transparent" r="40" stroke="currentColor" stroke-dasharray="251.2" stroke-dashoffset="210.6" stroke-linecap="round" stroke-width="12"></circle>
+                  </svg>
+                  <div class="absolute inset-0 flex flex-col items-center justify-center">
+                    <span class="text-3xl font-black">1,284</span>
+                    <span class="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Orders Total</span>
+                  </div>
+                </div>
+                <div class="mt-8 grid grid-cols-2 gap-x-8 gap-y-3 w-full">
+                  <div class="flex items-center gap-2">
+                    <div class="w-2 h-2 rounded-full bg-blue-500"></div>
+                    <p class="text-xs text-slate-600 dark:text-slate-400">
+                      Wash <span class="font-bold text-slate-900 dark:text-white ml-1">42%</span>
+                    </p>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <div class="w-2 h-2 rounded-full bg-indigo-600"></div>
+                    <p class="text-xs text-slate-600 dark:text-slate-400">
+                      Dry <span class="font-bold text-slate-900 dark:text-white ml-1">28%</span>
+                    </p>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <div class="w-2 h-2 rounded-full bg-primary"></div>
+                    <p class="text-xs text-slate-600 dark:text-slate-400">
+                      Fold <span class="font-bold text-slate-900 dark:text-white ml-1">18%</span>
+                    </p>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <div class="w-2 h-2 rounded-full bg-slate-300"></div>
+                    <p class="text-xs text-slate-600 dark:text-slate-400">
+                      Iron <span class="font-bold text-slate-900 dark:text-white ml-1">12%</span>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Revenue Growth Line Chart -->
+            <div class="lg:col-span-8 bg-white dark:bg-slate-900 p-6 rounded-xl border border-primary/10 shadow-sm flex flex-col">
+              <div class="flex items-center justify-between mb-4">
+                <div>
+                  <h4 class="font-bold">Revenue Growth (Weekly)</h4>
+                  <p class="text-xs text-slate-500">Performance tracking from Mon 12 to Sun 18</p>
+                </div>
+                <div class="flex gap-2">
+                  <button class="px-3 py-1.5 text-xs font-bold bg-primary text-white rounded-lg">Weekly</button>
+                  <button class="px-3 py-1.5 text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-lg">Monthly</button>
+                </div>
+              </div>
+              <div class="flex-1 py-4">
+                <div class="h-64 w-full relative">
+                  <svg class="w-full h-full" preserveaspectratio="none" viewbox="0 0 1000 300">
+                    <defs>
+                      <lineargradient id="chartGradient" x1="0" x2="0" y1="0" y2="1">
+                        <stop offset="0%" stop-color="#135bec" stop-opacity="0.2"></stop>
+                        <stop offset="100%" stop-color="#135bec" stop-opacity="0"></stop>
+                      </lineargradient>
+                    </defs>
+                    <!-- Grid lines -->
+                    <line class="text-slate-100 dark:text-slate-800" stroke="currentColor" stroke-dasharray="4" x1="0" x2="1000" y1="50" y2="50"></line>
+                    <line class="text-slate-100 dark:text-slate-800" stroke="currentColor" stroke-dasharray="4" x1="0" x2="1000" y1="150" y2="150"></line>
+                    <line class="text-slate-100 dark:text-slate-800" stroke="currentColor" stroke-dasharray="4" x1="0" x2="1000" y1="250" y2="250"></line>
+                    <!-- Area fill -->
+                    <path d="M0,220 Q150,180 300,240 T600,120 T900,160 T1000,100 L1000,300 L0,300 Z" fill="url(#chartGradient)"></path>
+                    <!-- Line -->
+                    <path d="M0,220 Q150,180 300,240 T600,120 T900,160 T1000,100" fill="none" stroke="#135bec" stroke-linecap="round" stroke-width="4"></path>
+                    <!-- Dots -->
+                    <circle cx="0" cy="220" fill="#135bec" r="5"></circle>
+                    <circle cx="300" cy="240" fill="#135bec" r="5"></circle>
+                    <circle cx="600" cy="120" fill="#135bec" r="5"></circle>
+                    <circle cx="1000" cy="100" fill="#135bec" r="5"></circle>
+                  </svg>
+                  <div class="absolute inset-x-0 bottom-0 flex justify-between px-2 pt-4">
+                    <span class="text-[10px] font-bold text-slate-400">MON</span>
+                    <span class="text-[10px] font-bold text-slate-400">TUE</span>
+                    <span class="text-[10px] font-bold text-slate-400">WED</span>
+                    <span class="text-[10px] font-bold text-slate-400">THU</span>
+                    <span class="text-[10px] font-bold text-slate-400">FRI</span>
+                    <span class="text-[10px] font-bold text-slate-400">SAT</span>
+                    <span class="text-[10px] font-bold text-slate-400">SUN</span>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-4 pt-4 border-t border-primary/10 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <p class="text-sm font-bold">$12,450.00</p>
+                  <span class="text-xs text-green-500 font-bold">+8.5% Growth</span>
+                </div>
+                <button class="flex items-center gap-2 text-primary font-bold text-xs hover:underline">View detailed report <span class="material-symbols-outlined text-sm">arrow_forward</span></button>
+              </div>
+            </div>
+          </div>
+          <!-- Deliveries and Operations Row -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- Upcoming Deliveries List -->
+            <div class="lg:col-span-8 bg-white dark:bg-slate-900 rounded-xl border border-primary/10 shadow-sm overflow-hidden">
+              <div class="p-6 border-b border-primary/10 flex items-center justify-between">
+                <h4 class="font-bold">Upcoming Deliveries (Today)</h4>
+                <div class="flex gap-3">
+                  <button class="flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">filter_list</span> Filter</button>
+                  <button class="flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-primary transition-colors"><span class="material-symbols-outlined text-sm">file_download</span> Export</button>
+                </div>
+              </div>
+              <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                  <thead class="bg-slate-50 dark:bg-slate-800/50">
+                    <tr>
+                      <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Customer</th>
+                      <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Estimated Time</th>
+                      <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Status</th>
+                      <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Location</th>
+                      <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-wider text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-primary/5">
+                    <tr class="hover:bg-primary/5 transition-colors">
+                      <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center gap-3">
+                          <div class="size-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-bold text-xs">SK</div>
+                          <div>
+                            <p class="text-sm font-bold">Sarah Jenkins</p>
+                            <p class="text-[10px] text-slate-500 font-medium">Order #LF-2940</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center gap-1.5 text-sm font-medium">
+                          <span class="material-symbols-outlined text-slate-400 text-sm">schedule</span>
+                          <span>14:30 PM</span>
+                        </div>
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2 py-1 text-[10px] font-bold rounded-full bg-blue-100 text-blue-600 uppercase">Out for delivery</span>
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">221B Baker St, NW1</td>
+                      <td class="px-6 py-4 whitespace-nowrap text-right">
+                        <button class="material-symbols-outlined text-slate-400 hover:text-primary">navigation</button>
+                      </td>
+                    </tr>
+                    <tr class="hover:bg-primary/5 transition-colors">
+                      <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center gap-3">
+                          <div class="size-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-bold text-xs">JM</div>
+                          <div>
+                            <p class="text-sm font-bold">James Miller</p>
+                            <p class="text-[10px] text-slate-500 font-medium">Order #LF-2945</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center gap-1.5 text-sm font-medium">
+                          <span class="material-symbols-outlined text-slate-400 text-sm">schedule</span>
+                          <span>15:15 PM</span>
+                        </div>
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2 py-1 text-[10px] font-bold rounded-full bg-amber-100 text-amber-600 uppercase">Packing</span>
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">45 Kensington Gdns</td>
+                      <td class="px-6 py-4 whitespace-nowrap text-right">
+                        <button class="material-symbols-outlined text-slate-400 hover:text-primary">navigation</button>
+                      </td>
+                    </tr>
+                    <tr class="hover:bg-primary/5 transition-colors">
+                      <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center gap-3">
+                          <div class="size-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-bold text-xs">AL</div>
+                          <div>
+                            <p class="text-sm font-bold">Anna Lofton</p>
+                            <p class="text-[10px] text-slate-500 font-medium">Order #LF-2938</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center gap-1.5 text-sm font-medium">
+                          <span class="material-symbols-outlined text-slate-400 text-sm">schedule</span>
+                          <span>16:45 PM</span>
+                        </div>
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2 py-1 text-[10px] font-bold rounded-full bg-green-100 text-green-600 uppercase">Scheduled</span>
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">12 Hyde Park Square</td>
+                      <td class="px-6 py-4 whitespace-nowrap text-right">
+                        <button class="material-symbols-outlined text-slate-400 hover:text-primary">navigation</button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <!-- Fleet Tracking Small Map/Card -->
+            <div class="lg:col-span-4 flex flex-col gap-6">
+              <div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-primary/10 shadow-sm flex-1">
+                <h4 class="font-bold mb-4">Live Fleet Status</h4>
+                <div class="relative w-full h-40 rounded-lg overflow-hidden mb-4 bg-slate-100">
+                  <img alt="Fleet tracking map" class="w-full h-full object-cover" data-alt="Stylized map showing truck locations in a city" data-location="London" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD1cIhfQ2_YcG1T4YPe_4LDgGlqeTnNxZksi2DayPSaWDMykbj_lX_V9Uap9kDxPns6-oxoMs7Ipm3kLfK40-GVx383fy_p8jAZpJopSUJhVc7OlzVdnaFJnOBsIzFr5mPS6TRAfsgy9BYEX1GH9KDy4BBhnNaiZ-l-ZhW3cKdfA4PAqxJQ_hyLjWVEojBV2drIzAx01BkUasSzPNkmJVamLtukMNds18j8IyPzMEslUcXDHCUQXwSo_0lvI5C9RjrcVwFONqlQvXs" />
+                  <div class="absolute top-2 right-2 bg-green-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full uppercase">All Active</div>
+                </div>
+                <div class="space-y-4">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                      <div class="size-2 rounded-full bg-green-500"></div>
+                      <p class="text-xs font-bold">Truck #04 (Alex)</p>
+                    </div>
+                    <p class="text-[10px] text-slate-500 uppercase font-bold">2.4 mi away</p>
+                  </div>
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                      <div class="size-2 rounded-full bg-green-500"></div>
+                      <p class="text-xs font-bold">Truck #01 (Maya)</p>
+                    </div>
+                    <p class="text-[10px] text-slate-500 uppercase font-bold">0.8 mi away</p>
+                  </div>
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                      <div class="size-2 rounded-full bg-orange-500"></div>
+                      <p class="text-xs font-bold">Truck #07 (Liam)</p>
+                    </div>
+                    <p class="text-[10px] text-slate-500 uppercase font-bold">Stationary</p>
+                  </div>
+                </div>
+              </div>
+              <!-- Customer Growth Insight -->
+              <div class="bg-primary p-6 rounded-xl shadow-lg text-white">
+                <div class="flex items-start justify-between mb-4">
+                  <span class="material-symbols-outlined text-4xl opacity-50">loyalty</span>
+                  <div class="bg-white/20 px-2 py-1 rounded text-[10px] font-black uppercase tracking-widest">Growth Insight</div>
+                </div>
+                <h5 class="font-bold text-lg leading-tight mb-2">New Customer Registrations</h5>
+                <p class="text-sm opacity-90 mb-4">You've reached 85% of your monthly goal for new enterprise clients.</p>
+                <div class="w-full bg-white/20 h-2 rounded-full overflow-hidden">
+                  <div class="bg-white h-full w-[85%] rounded-full"></div>
+                </div>
+                <div class="flex justify-between mt-2 text-[10px] font-bold uppercase opacity-80">
+                  <span>17 of 20 Goal</span>
+                  <span>3 Remaining</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>

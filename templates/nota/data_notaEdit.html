@@ -1,0 +1,82 @@
+{% extends 'layouts/base.html' %}
+
+{% block content %}
+
+<div class="max-w-xl mx-auto mt-10">
+
+  <div class="bg-white dark:bg-slate-900 rounded-xl shadow p-6">
+
+    <h2 class="text-xl font-semibold text-slate-800 dark:text-slate-100 mb-6">
+      Edit Data Nota
+    </h2>
+
+    <form method="POST" class="space-y-5">
+      {% csrf_token %}
+
+      <!-- Nama -->
+      <div>
+        <label class="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">
+          Nama Pelanggan
+        </label>
+        <input type="text" name="nama" value="{{ nota.pelanggan.nama }}"
+        class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+      </div>
+
+      <!-- Jenis -->
+      <div>
+        <label class="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">
+          Jenis Laundry
+        </label>
+        <input type="text" name="jenis" value="{{ nota.jenis }}"
+        class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+      </div>
+
+      <!-- Berat -->
+      <div>
+        <label class="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">
+          Berat (Kg)
+        </label>
+        <input type="number" name="berat" value="{{ nota.berat  }}"
+        class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+      </div>
+
+      <!-- Harga -->
+      <div>
+        <label class="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">
+          Harga
+        </label>
+        <input type="number" name="harga" value="{{ nota.harga }}"
+        class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+      </div>
+
+      <!-- Tanggal -->
+      <div>
+        <label class="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">
+          Tanggal
+        </label>
+        <input type="date" name="tgl" value="{{ nota.tgl|date:'Y-m-d' }}"
+        class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+      </div>
+
+      <!-- Button -->
+      <div class="flex justify-end gap-3 pt-4">
+
+        <a href="{% url 'nota:data_nota' %}"
+        class="px-4 py-2 rounded-lg text-sm font-medium bg-slate-200 hover:bg-slate-300 text-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-slate-200 transition">
+          Batal
+        </a>
+
+        <button type="submit"
+        class="px-5 py-2 rounded-lg text-sm font-semibold bg-blue-500 hover:bg-blue-600 text-white transition">
+          Update Data
+        </button>
+
+      </div>
+
+    </form>
+
+  </div>
+
+</div>
+
+{% endblock %}

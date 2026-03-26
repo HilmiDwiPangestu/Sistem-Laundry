@@ -1,0 +1,117 @@
+{% extends 'layouts/base.html' %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4">
+
+  <!-- HEADER -->
+  <div class="mb-8">
+
+    <h1 class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-slate-100">
+      Detail Nota
+    </h1>
+
+    <p class="text-slate-500 dark:text-slate-400">
+      Tanggal: <span class="font-semibold text-slate-700 dark:text-slate-200">
+        {{ tgl }}
+      </span>
+    </p>
+
+  </div>
+
+
+  <!-- CARD TABLE -->
+  <section class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+
+    <!-- HEADER CARD -->
+    <div class="flex items-center justify-between px-6 py-5 border-b border-slate-100 dark:border-slate-800">
+
+      <div class="flex items-center gap-2 text-primary">
+        <span class="material-symbols-outlined">receipt</span>
+        <h2 class="font-bold text-lg text-slate-900 dark:text-slate-100">
+          Daftar Nota
+        </h2>
+      </div>
+
+      <a href="{% url 'item:laporan_bulanan' %}"
+         class="text-sm font-semibold text-primary hover:underline flex items-center gap-1">
+
+        <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+        Kembali
+
+      </a>
+
+    </div>
+
+
+    <!-- TABLE -->
+    <div class="overflow-x-auto">
+
+      <table class="w-full text-sm">
+
+        <thead class="bg-slate-50 dark:bg-slate-800/40 text-slate-500 dark:text-slate-400">
+          <tr>
+            <th class="px-6 py-3 text-left font-semibold">No</th>
+            <th class="px-6 py-3 text-left font-semibold">Pelanggan</th>
+            <th class="px-6 py-3 text-center font-semibold">Jenis</th>
+            <th class="px-6 py-3 text-center font-semibold">Kg</th>
+            <th class="px-6 py-3 text-right font-semibold">Harga</th>
+          </tr>
+        </thead>
+
+        <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+
+          {% for nota in notas %}
+          <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition">
+
+            <td class="px-6 py-4 text-slate-500">
+              {{ forloop.counter }}
+            </td>
+
+            <td class="px-6 py-4 font-medium text-slate-900 dark:text-slate-100">
+              {{ nota.pelanggan.nama }}
+            </td>
+
+            <td class="px-6 py-4 text-center text-slate-600 dark:text-slate-400">
+              {{ nota.get_jenis_display }}
+            </td>
+
+            <td class="px-6 py-4 text-center text-slate-600 dark:text-slate-400">
+              {{ nota.berat }}
+            </td>
+
+            <td class="px-6 py-4 text-right font-semibold text-emerald-500">
+              Rp {{ nota.harga|floatformat:0 }}
+            </td>
+
+          </tr>
+
+          {% empty %}
+          <tr>
+            <td colspan="5" class="py-16 text-center">
+
+              <div class="flex flex-col items-center gap-2 text-slate-400">
+
+                <span class="material-symbols-outlined text-4xl">
+                  receipt_long
+                </span>
+
+                <p class="text-sm">
+                  Tidak ada nota pada tanggal ini
+                </p>
+
+              </div>
+
+            </td>
+          </tr>
+          {% endfor %}
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </section>
+
+</div>
+{% endblock %}

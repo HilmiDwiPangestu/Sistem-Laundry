@@ -1,0 +1,70 @@
+{% extends 'layouts/base_user.html' %}
+
+{% block content %}
+<div class="w-full max-w-lg mx-auto mt-8">
+
+  <div class="bg-white dark:bg-slate-900 p-6 rounded-xl shadow border border-slate-200 dark:border-slate-800">
+
+    <!-- Header -->
+    <div class="mb-6">
+      <h1 class="text-lg font-bold text-slate-900 dark:text-white">
+        Pelanggan Baru
+      </h1>
+      <p class="text-xs text-slate-500">
+        Tambahkan data pelanggan untuk membuat nota laundry.
+      </p>
+    </div>
+
+    <!-- Form -->
+    <form method="post">
+      {% csrf_token %}
+
+      <div class="space-y-4">
+
+        <!-- Nama -->
+        <div>
+          <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+            Nama
+          </label>
+          {{ form.nama }}
+        </div>
+
+        <!-- Alamat -->
+        <div>
+          <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+            Alamat
+          </label>
+          {{ form.alamat }}
+        </div>
+
+        <!-- Jenis Pelanggan -->
+        <div>
+          <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+            Jenis Pelanggan
+          </label>
+          {{ form.jenis_plggn }}
+        </div>
+
+      </div>
+
+      <!-- Button -->
+      <div class="mt-6 flex justify-end gap-2">
+
+        <a href="javascript:history.back()"
+           class="px-4 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800">
+          Batal
+        </a>
+
+        <button type="submit"
+          class="px-4 py-2 text-sm font-semibold text-white bg-primary rounded-lg hover:opacity-90 transition">
+          Simpan Pelanggan
+        </button>
+
+      </div>
+
+    </form>
+
+  </div>
+
+</div>
+{% endblock %}

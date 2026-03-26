@@ -1,0 +1,106 @@
+{% extends 'layouts/base.html' %}
+
+{% block content %}
+  <div class="max-w-7xl mx-auto px-4">
+    <!-- HEADER -->
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-8">
+      <div>
+        <h1 class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-slate-100">Data Nota Laundry</h1>
+        <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Manajemen data nota dan item pelanggan</p>
+      </div>
+
+      <div class="flex gap-3">
+        <button class="px-4 h-10 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-700 transition">Cancel</button>
+
+        <button class="px-4 h-10 rounded-lg bg-primary text-white text-sm font-semibold flex items-center gap-2 shadow hover:bg-primary/90 transition">
+          <span class="material-symbols-outlined text-[18px]">print</span>
+
+          Print
+        </button>
+      </div>
+    </div>
+
+    <!-- GRID -->
+    <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+      <!-- TABLE -->
+      <div class="xl:col-span-2">
+        <section class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+          <!-- HEADER TABLE -->
+          <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-800">
+            <div class="flex items-center gap-2 text-primary">
+              <span class="material-symbols-outlined">receipt_long</span>
+              <h2 class="font-semibold text-slate-900 dark:text-slate-100">Data Nota Pelanggan</h2>
+            </div>
+
+            <button class="flex items-center gap-1 text-sm font-semibold text-primary hover:underline">
+              <span class="material-symbols-outlined text-[18px]">add</span>
+
+              Tambah Nota
+            </button>
+          </div>
+
+          <!-- TABLE -->
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead class="bg-slate-50 dark:bg-slate-800/40 text-slate-500 dark:text-slate-400">
+                <tr>
+                  <th class="px-6 py-3 text-left font-semibold">Pelanggan</th>
+                  <th class="px-6 py-3 text-center font-semibold">Jenis</th>
+                  <th class="px-6 py-3 text-center font-semibold">Kg</th>
+                  <th class="px-6 py-3 text-right font-semibold">Harga</th>
+                  <th class="px-6 py-3 text-right font-semibold">Tanggal</th>
+                  <th class="px-6 py-3 text-right font-semibold">Aksi</th>
+                </tr>
+              </thead>
+
+              <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+                {% for n in notas %}
+                  <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition">
+                    <td class="px-6 py-4 font-medium text-slate-900 dark:text-slate-100">{{ n.pelanggan.nama }}</td>
+
+                    <td class="px-6 py-4 text-center text-slate-500">{{ n.get_jenis_display }}</td>
+
+                    <td class="px-6 py-4 text-center">{{ n.berat }}</td>
+
+                    <td class="px-6 py-4 text-right font-semibold text-slate-800 dark:text-slate-200">Rp {{ n.harga|floatformat:0 }}</td>
+
+                    <td class="px-6 py-4 text-right text-slate-500">{{ n.tgl }}</td>
+
+                    <td class="px-6 py-4">
+                      <div class="flex justify-end">
+                        <a href="{% url 'item:detail_item' n.id %}" class="px-3 py-1.5 rounded-md text-xs font-semibold bg-blue-50 text-blue-600 hover:bg-blue-100 transition">Lihat Item</a>
+                      </div>
+                    </td>
+                  </tr>
+                {% empty %}
+                  <tr>
+                    <td colspan="6" class="py-12 text-center text-slate-400">Belum ada data nota</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <!-- SIDEBAR -->
+      <div class="xl:col-span-1">
+        <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm">
+          <h3 class="font-semibold text-slate-900 dark:text-slate-100 mb-4">Statistik Hari Ini</h3>
+
+          <div class="space-y-4 text-sm">
+            <div class="flex justify-between">
+              <span class="text-slate-500">Total Nota</span>
+              <span class="font-semibold text-slate-900 dark:text-slate-100">{{ notas|length }}</span>
+            </div>
+
+            <div class="flex justify-between">
+              <span class="text-slate-500">Pendapatan</span>
+              <span class="font-semibold text-emerald-500">Rp {{ total_pendapatan|default:'0' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

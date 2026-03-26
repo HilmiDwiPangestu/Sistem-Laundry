@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Sani Laundry</title>
+    
+    
+    <!-- Menjadi -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
+
+
+    {% comment %} <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/css/select2.min.css" rel="stylesheet" />
+
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/js/select2.min.js"></script>  {% endcomment %}
+
+    <style>
+      body {
+        font-family: 'Inter', sans-serif;
+      }
+
+      .material-symbols-outlined {
+        font-size: 20px;
+      }
+
+      /* SELECT2 */
+
+      /* container */
+      .select2-container{
+          width:100% !important;
+      }
+
+      /* box utama */
+      .select2-container .select2-selection--single{
+          height:44px !important;
+          border-radius:0.5rem !important;
+          border:1px solid rgb(203 213 225) !important;
+          display:flex;
+          align-items:center;
+          background:white;
+      }
+
+      /* dark mode */
+      .dark .select2-container .select2-selection--single{
+          background:#0f172a;
+          border-color:#334155;
+      }
+
+      /* text dalam select */
+      .select2-selection__rendered{
+          padding-left:12px !important;
+          line-height:44px !important;
+          font-size:14px;
+      }
+
+      /* arrow */
+      .select2-selection__arrow{
+          height:44px !important;
+      }
+
+      /* dropdown */
+      .select2-dropdown{
+          border-radius:0.5rem;
+          border:1px solid rgb(203 213 225);
+      }
+
+      /* highlight item */
+      .select2-results__option--highlighted{
+          background:#135bec !important;
+      }
+    </style>
+
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              primary: '#135bec',
+              'background-light': '#f6f6f8',
+              'background-dark': '#101622'
+            },
+            fontFamily: {
+              display: ['Inter']
+            },
+            borderRadius: { DEFAULT: '0.25rem', lg: '0.5rem', xl: '0.75rem', full: '9999px' }
+          }
+        }
+      }
+    </script>
+
+  </head>
+
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display">
+  <div class="relative flex h-auto min-h-screen w-full flex-col overflow-x-hidden">
+      <!-- Top Navigation Bar -->
+      <header class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-6 py-3 sticky top-0 z-50">
+
+        <!-- LEFT -->
+        <div class="flex items-center gap-4">
+
+            {% comment %} <!-- HAMBURGER -->
+            <button id="hamburgerBtn" class="md:hidden p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">
+            <span class="material-symbols-outlined">menu</span>
+            </button> {% endcomment %}
+
+            <!-- LOGO -->
+            <div class="flex items-center gap-4 text-primary">
+            <div class="size-8 bg-primary/10 rounded-lg flex items-center justify-center">
+                <span class="material-symbols-outlined text-primary">local_laundry_service</span>
+            </div>
+
+            <h2 class="text-slate-900 dark:text-white text-lg font-bold">
+                Sani Laundry
+            </h2>
+            </div>
+
+        </div>
+
+
+        <!-- DESKTOP MENU -->
+        {% comment %} <nav class="hidden md:flex items-center gap-6">
+            <a class="text-slate-600 dark:text-slate-400 text-sm font-medium hover:text-primary transition-colors" href="#">Dashboard</a>
+            <a class="text-primary text-sm font-semibold border-b-2 border-primary pb-1" href="#">New Order</a>
+            <a class="text-slate-600 dark:text-slate-400 text-sm font-medium hover:text-primary transition-colors" href="#">Orders</a>
+            <a class="text-slate-600 dark:text-slate-400 text-sm font-medium hover:text-primary transition-colors" href="#">Inventory</a>
+        </nav> {% endcomment %}
+
+
+        <!-- RIGHT -->
+        <div class="flex items-center gap-4">
+
+            <button class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800">
+            <span class="material-symbols-outlined">notifications</span>
+            </button>
+
+            <div class="size-10 rounded-full bg-primary flex items-center justify-center text-white font-bold text-xs">
+            SR
+            </div>
+
+        </div>
+
+    </header>
+
+    <!-- MOBILE MENU -->
+    <div id="mobileMenu"
+    class="hidden md:hidden border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+
+    <nav class="flex flex-col p-4 gap-4">
+
+        <a class="text-slate-700 dark:text-slate-300 font-medium hover:text-primary">
+        Dashboard
+        </a>
+
+        <a class="text-slate-700 dark:text-slate-300 font-medium hover:text-primary">
+        New Order
+        </a>
+
+        <a class="text-slate-700 dark:text-slate-300 font-medium hover:text-primary">
+        Orders
+        </a>
+
+        <a class="text-slate-700 dark:text-slate-300 font-medium hover:text-primary">
+        Inventory
+        </a>
+
+    </nav>
+  </div>
+
+
+      {% comment %} CONTENT {% endcomment %}
+      <main class="flex-1 flex flex-col lg:flex-row max-w-[1600px] mx-auto w-full gap-6">
+        <!-- Sidebar: Customer Selection -->
+        
+
+        <!-- Main Form Area -->
+        
+        {% block content %}
+          
+        {% endblock %}
+          
+        
+      </main>
+      <!-- Floating Quick Actions (Mobile/Tablet Only) -->
+      <div class="fixed bottom-6 right-6 lg:hidden">
+        <button class="size-14 rounded-full bg-primary text-white shadow-xl flex items-center justify-center"><span class="material-symbols-outlined">add</span></button>
+      </div>
+    </div>
+
+
+    <footer class="w-full bg-white p-4 border-t border-slate-200 dark:border-slate-800 mt-6">
+      <p class="text-center text-slate-500 text-sm">&copy; 2026 Sani Laundry. All rights reserved.</p>
+    </footer>
+    
+    <script>
+
+      const btn = document.getElementById("hamburgerBtn")
+      const menu = document.getElementById("mobileMenu")
+
+      btn.addEventListener("click", () => {
+          menu.classList.toggle("hidden")
+      })
+
+
+    </script>
+  </body>
+</html>

@@ -1,0 +1,52 @@
+{% extends 'layouts/base_user.html' %}
+
+{% block content %}
+  <div class="w-full max-w-lg mx-auto mt-8">
+    <div class="bg-white dark:bg-slate-900 p-6 rounded-xl shadow border border-slate-200 dark:border-slate-800">
+      <h2 class="font-bold text-lg text-center mb-4">Buat Nota Laundry</h2>
+
+      <div class="mb-1 text-sm text-slate-500">
+        Nama:
+        <span class="font-semibold text-slate-800 dark:text-white">{{ pelanggan.nama }}</span>
+    </div>
+
+    <div class="mb-4 text-sm text-slate-500">
+        Jenis Pelanggan: 
+        <span class="font-semibold text-slate-800 dark:text-white">{{ pelanggan.get_jenis_plggn_display }}</span>
+    </div>
+
+      <form method="post">
+        {% csrf_token %}
+
+        <div class="space-y-4">
+          <div>
+            <label class="text-sm font-medium">Berat (Kg)</label>
+            {{ form.berat }}
+          </div>
+
+          <div>
+            <label class="text-sm font-medium">Jenis Laundry</label>
+            {{ form.jenis }}
+          </div>
+
+          <div>
+            <label class="text-sm font-medium">Layanan</label>
+            {{ form.layanan }}
+          </div>
+
+          <div>
+            <label class="text-sm font-medium">Harga</label>
+            {{ form.harga }}
+          </div>
+
+          <div>
+            <label class="text-sm font-medium">Tanggal</label>
+            {{ form.tgl }}
+          </div>
+        </div>
+
+        <button type="submit" class="mt-6 w-full py-2 bg-primary text-white rounded-lg font-semibold hover:opacity-90">Simpan Nota</button>
+      </form>
+    </div>
+  </div>
+{% endblock %}
