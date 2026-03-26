@@ -26,7 +26,10 @@ SECRET_KEY = 'django-insecure-ze!06*5bt2*uz9y1uiirb1c2u8x)l&cy759+@x7xr)=mrh^aro
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['postethmoid-dannette-unscrawled.ngrok-free.dev']
+ALLOWED_HOSTS = [
+    '*',
+    'postethmoid-dannette-unscrawled.ngrok-free.dev'
+    ]
 
 CSRF_TRUSTED_ORIGINS = [
     "https://postethmoid-dannette-unscrawled.ngrok-free.dev"

@@ -8,15 +8,15 @@
       <div class="bg-gradient-to-br from-primary to-blue-700 rounded-xl p-6 text-white shadow-lg">
         <div class="flex justify-between items-start mb-5">
           <span class="material-symbols-outlined bg-white/20 p-2 rounded-lg">loyalty</span>
-
           <span class="text-[10px] font-bold bg-white/20 px-2 py-1 rounded">LOYALTY STATUS</span>
         </div>
 
         <h4 class="text-2xl font-bold">1,240 Points</h4>
-
         <p class="text-xs text-white/80 mt-1">Sarah is eligible for a 15% discount on dry cleaning today</p>
 
-        <button class="mt-5 w-full py-2 bg-white text-primary text-xs font-semibold rounded-lg hover:bg-slate-100 transition">Apply Reward</button>
+        <button class="mt-5 w-full py-2 bg-white text-primary text-xs font-semibold rounded-lg hover:bg-slate-100 transition">
+          Apply Reward
+        </button>
       </div>
 
       <!-- SEARCH CUSTOMER -->
@@ -31,8 +31,22 @@
         </div>
 
         <!-- SEARCH -->
-        <form class="mb-5">
-          <input type="text" name="q" value="{{ query }}" placeholder="Cari nama atau nomor HP..." class="w-full h-10 px-4 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:ring-2 focus:ring-primary focus:border-primary" />
+        <form class="mb-5" method="GET">
+          <div class="flex flex-col sm:flex-row gap-2">
+            <input
+              type="text"
+              name="q"
+              value="{{ query }}"
+              placeholder="Cari nama atau nomor HP..."
+              class="w-full h-10 px-4 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:ring-2 focus:ring-primary focus:border-primary"
+            />
+            {% if filter_tgl %}
+              <input type="hidden" name="tgl" value="{{ filter_tgl }}">
+            {% endif %}
+            <button type="submit" class="bg-primary text-white text-xs px-4 py-2 rounded-lg hover:opacity-90 whitespace-nowrap">
+              Cari
+            </button>
+          </div>
         </form>
 
         <!-- CUSTOMER SELECTED -->
@@ -46,12 +60,13 @@
 
                 <div>
                   <p class="text-sm font-semibold text-slate-900 dark:text-white">{{ selected_customer.nama }}</p>
-
                   <p class="text-xs text-slate-500">{{ selected_customer.get_jenis_plggn_display }}</p>
                 </div>
               </div>
 
-              <a href="{% url 'user:buat_nota' selected_customer.id %}" class="text-xs bg-primary text-white px-4 py-2 rounded-lg hover:opacity-90">+ Buat Nota</a>
+              <a href="{% url 'user:buat_nota' selected_customer.id %}" class="text-xs bg-primary text-white px-4 py-2 rounded-lg hover:opacity-90">
+                + Buat Nota
+              </a>
             </div>
           </div>
         {% endif %}
@@ -59,7 +74,7 @@
     </div>
 
     <!-- DAFTAR PELANGGAN -->
-    <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+    <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
       <div class="p-6 border-b border-slate-200 dark:border-slate-800">
         <h3 class="font-semibold text-slate-900 dark:text-white flex items-center gap-2">
           <span class="material-symbols-outlined text-primary">group</span>
@@ -83,11 +98,11 @@
             {% for p in pelanggan %}
               <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40">
                 <td class="px-6 py-4 font-medium text-slate-700 dark:text-slate-200">{{ p.nama }}</td>
-
                 <td class="px-6 py-4 text-slate-500">{{ p.get_jenis_plggn_display }}</td>
-
                 <td class="px-6 py-4 text-center">
-                  <a href="{% url 'user:buat_nota' p.id %}" class="text-xs bg-primary text-white px-4 py-2 rounded-lg hover:opacity-90">+ Nota</a>
+                  <a href="{% url 'user:buat_nota' p.id %}" class="text-xs bg-primary text-white px-4 py-2 rounded-lg hover:opacity-90">
+                    + Nota
+                  </a>
                 </td>
               </tr>
             {% empty %}
@@ -98,10 +113,60 @@
           </tbody>
         </table>
       </div>
+
+      <!-- PAGINATION PELANGGAN -->
+      <div class="px-6 py-4 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <p class="text-sm text-slate-500">
+          Menampilkan
+          <span class="font-semibold text-slate-700 dark:text-slate-200">{{ pelanggan.start_index }}</span>
+          -
+          <span class="font-semibold text-slate-700 dark:text-slate-200">{{ pelanggan.end_index }}</span>
+          dari
+          <span class="font-semibold text-slate-700 dark:text-slate-200">{{ pelanggan.paginator.count }}</span>
+          pelanggan
+        </p>
+
+        <div class="flex items-center gap-2 flex-wrap">
+          {% if pelanggan.has_previous %}
+            <a href="?q={{ query }}&pelanggan_page={{ pelanggan.previous_page_number }}&nota_page={{ notas.number }}{% if filter_tgl %}&tgl={{ filter_tgl }}{% endif %}"
+               class="px-4 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800">
+              Prev
+            </a>
+          {% else %}
+            <span class="px-4 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 text-slate-400 cursor-not-allowed">
+              Prev
+            </span>
+          {% endif %}
+
+          {% for num in pelanggan.paginator.page_range %}
+            {% if pelanggan.number == num %}
+              <span class="px-4 py-2 text-sm rounded-lg bg-primary text-white font-semibold">
+                {{ num }}
+              </span>
+            {% else %}
+              <a href="?q={{ query }}&pelanggan_page={{ num }}&nota_page={{ notas.number }}{% if filter_tgl %}&tgl={{ filter_tgl }}{% endif %}"
+                 class="px-4 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800">
+                {{ num }}
+              </a>
+            {% endif %}
+          {% endfor %}
+
+          {% if pelanggan.has_next %}
+            <a href="?q={{ query }}&pelanggan_page={{ pelanggan.next_page_number }}&nota_page={{ notas.number }}{% if filter_tgl %}&tgl={{ filter_tgl }}{% endif %}"
+               class="px-4 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800">
+              Next
+            </a>
+          {% else %}
+            <span class="px-4 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 text-slate-400 cursor-not-allowed">
+              Next
+            </span>
+          {% endif %}
+        </div>
+      </div>
     </div>
 
     <!-- DAFTAR NOTA -->
-    <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+    <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
       <!-- HEADER -->
       <div class="p-6 border-b border-slate-200 dark:border-slate-800 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
@@ -114,8 +179,11 @@
         </div>
 
         <!-- FILTER -->
-        <form method="GET" class="flex items-center gap-2">
+        <form method="GET" class="flex flex-col sm:flex-row items-start sm:items-center gap-2">
           <input type="date" name="tgl" value="{{ filter_tgl }}" class="h-9 px-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm" />
+
+          <input type="hidden" name="q" value="{{ query }}">
+          <input type="hidden" name="pelanggan_page" value="{{ pelanggan.number }}">
 
           <button class="bg-primary text-white text-xs px-4 py-2 rounded-lg hover:opacity-90">Filter</button>
 
@@ -141,42 +209,31 @@
           <tbody class="divide-y divide-slate-200 dark:divide-slate-800">
             {% for n in notas %}
               <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40">
-                <td class="px-6 py-4">{{ forloop.counter }}</td>
-
+                <td class="px-6 py-4">{{ notas.start_index|add:forloop.counter0 }}</td>
                 <td class="px-6 py-4 font-medium">{{ n.pelanggan.nama }}</td>
-
-                <td class="px-6 py-4">{{ n.tgl }}</td>
-
+                <td class="px-6 py-4">{{ n.tgl|date:"d M Y" }}</td>
                 <td class="px-6 py-4 text-slate-500">{{ n.get_layanan_display }}</td>
-
                 <td class="px-6 py-4 text-slate-500">{{ n.berat }} Kg</td>
-
                 <td class="px-6 py-4 font-semibold text-primary">Rp {{ n.harga }}</td>
-
                 <td class="px-6 py-4">
-
                   {% if n.status == 'Sudah' %}
                     <span class="px-2 py-1 text-xs rounded bg-green-100 text-green-700">Sudah Didata</span>
                   {% else %}
                     <span class="px-2 py-1 text-xs rounded bg-yellow-100 text-yellow-700">Belum Didata/Selesai</span>
                   {% endif %}
-
                 </td>
 
                 <td class="px-6 py-4">
                   <div class="flex justify-center gap-2">
                     <a href="{% url 'user:tambah_item' n.id %}" class="flex items-center gap-1 text-xs bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700">
                       <span class="material-symbols-outlined text-[16px]">visibility</span>
-
                       Item
                     </a>
 
                     <form action="{% url 'user:hapus_nota' n.id %}" method="POST">
                       {% csrf_token %}
-
                       <button onclick="return confirm('Yakin ingin menghapus nota ini?')" class="flex items-center gap-1 text-xs bg-red-50 text-red-600 px-3 py-1.5 rounded-lg hover:bg-red-100">
                         <span class="material-symbols-outlined text-[16px]">delete</span>
-
                         Hapus
                       </button>
                     </form>
@@ -190,6 +247,56 @@
             {% endfor %}
           </tbody>
         </table>
+      </div>
+
+      <!-- PAGINATION NOTA -->
+      <div class="px-6 py-4 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <p class="text-sm text-slate-500">
+          Menampilkan
+          <span class="font-semibold text-slate-700 dark:text-slate-200">{{ notas.start_index }}</span>
+          -
+          <span class="font-semibold text-slate-700 dark:text-slate-200">{{ notas.end_index }}</span>
+          dari
+          <span class="font-semibold text-slate-700 dark:text-slate-200">{{ notas.paginator.count }}</span>
+          nota
+        </p>
+
+        <div class="flex items-center gap-2 flex-wrap">
+          {% if notas.has_previous %}
+            <a href="?nota_page={{ notas.previous_page_number }}&pelanggan_page={{ pelanggan.number }}&q={{ query }}{% if filter_tgl %}&tgl={{ filter_tgl }}{% endif %}"
+               class="px-4 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800">
+              Prev
+            </a>
+          {% else %}
+            <span class="px-4 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 text-slate-400 cursor-not-allowed">
+              Prev
+            </span>
+          {% endif %}
+
+          {% for num in notas.paginator.page_range %}
+            {% if notas.number == num %}
+              <span class="px-4 py-2 text-sm rounded-lg bg-primary text-white font-semibold">
+                {{ num }}
+              </span>
+            {% else %}
+              <a href="?nota_page={{ num }}&pelanggan_page={{ pelanggan.number }}&q={{ query }}{% if filter_tgl %}&tgl={{ filter_tgl }}{% endif %}"
+                 class="px-4 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800">
+                {{ num }}
+              </a>
+            {% endif %}
+          {% endfor %}
+
+          {% if notas.has_next %}
+            <a href="?nota_page={{ notas.next_page_number }}&pelanggan_page={{ pelanggan.number }}&q={{ query }}{% if filter_tgl %}&tgl={{ filter_tgl }}{% endif %}"
+               class="px-4 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800">
+              Next
+            </a>
+          {% else %}
+            <span class="px-4 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 text-slate-400 cursor-not-allowed">
+              Next
+            </span>
+          {% endif %}
+        </div>
       </div>
     </div>
   </div>

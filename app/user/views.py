@@ -4,29 +4,54 @@ from app.nota.models import Nota, Pelanggan, ItemPakaian
 from app.nota.forms import NotaForm, pelangganBaruForm
 from .forms import ItemLaundryForm
 from django.contrib import messages
+from django.core.paginator import Paginator
+from django.utils.timezone import now
 from django.db.models import Sum
 
 # Create your views here.
 def index(request):
-    query = request.GET.get('q')
-    filter_tgl = request.GET.get('tgl')
-    notas = Nota.objects.select_related('pelanggan').order_by('-id')
+    query = request.GET.get('q', '')
+    filter_tgl = request.GET.get('tgl', '')
+
+    # =========================
+    # DATA PELANGGAN
+    # =========================
+    pelanggan_list = Pelanggan.objects.all().order_by('-id')
+
+    if query:
+        pelanggan_list = pelanggan_list.filter(nama__icontains=query)
+
+    pelanggan_page_number = request.GET.get('pelanggan_page')
+    pelanggan_paginator = Paginator(pelanggan_list, 5)  # 5 data per halaman
+    pelanggan = pelanggan_paginator.get_page(pelanggan_page_number)
+
+    # =========================
+    # DATA NOTA
+    # =========================
+    notas_list = Nota.objects.select_related('pelanggan').order_by('-id')
 
     if filter_tgl:
-        notas = notas.filter(tgl=filter_tgl)
+        notas_list = notas_list.filter(tgl=filter_tgl)
 
+    nota_page_number = request.GET.get('nota_page')
+    nota_paginator = Paginator(notas_list, 5)  # 5 data per halaman
+    notas = nota_paginator.get_page(nota_page_number)
+
+    # =========================
+    # SELECTED CUSTOMER
+    # =========================
     selected_customer = None
-    pelanggan = Pelanggan.objects.all()
-
     if query:
         selected_customer = Pelanggan.objects.filter(nama__icontains=query).first()
 
     context = {
-        'notas': notas, 
+        'notas': notas,
         'selected_customer': selected_customer,
         'query': query,
-        'pelanggan': pelanggan
+        'pelanggan': pelanggan,
+        'filter_tgl': filter_tgl,
     }
+
     return render(request, 'user/detail_nota.html', context)
 
 def buatNota(request, pelanggan_id):
