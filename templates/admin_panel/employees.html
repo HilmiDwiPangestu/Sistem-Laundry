@@ -1,0 +1,23 @@
+{% extends 'admin_panel/base.html' %}
+{% block title %}Karyawan{% endblock %}
+{% block page_heading %}Karyawan{% endblock %}
+{% block content %}
+<section class="admin-page-head">
+  <div><span class="admin-kicker">Akses internal</span><h1>Kelola akun karyawan.</h1><p>Karyawan hanya menggunakan panel operasional. Pengaturan global tetap berada di bawah kontrol admin.</p></div>
+  <a class="btn btn-primary" href="{% url 'adminpanel:employee_create' %}">+ Tambah Karyawan</a>
+</section>
+<section class="admin-panel-card">
+  <form method="get" class="admin-search-row"><input class="form-control" name="q" value="{{ query }}" placeholder="Cari nama atau username..."><button class="btn btn-secondary" type="submit">Cari</button>{% if query %}<a class="btn btn-ghost" href="{% url 'adminpanel:employees' %}">Reset</a>{% endif %}</form>
+  <div class="admin-employee-list">
+    {% for u in employees %}
+    <article class="admin-employee-row">
+      <div class="admin-employee-avatar">{{ u.get_full_name|default:u.username|slice:':1'|upper }}</div>
+      <div class="admin-employee-main"><strong>{{ u.get_full_name|default:u.username }}</strong><span>@{{ u.username }}</span></div>
+      <span class="badge {% if u.is_active %}badge-success{% else %}badge-warning{% endif %}">{% if u.is_active %}Aktif{% else %}Nonaktif{% endif %}</span>
+      <div class="admin-row-actions"><a class="btn btn-secondary btn-sm" href="{% url 'adminpanel:employee_edit' u.id %}">Edit</a><form method="post" action="{% url 'adminpanel:employee_toggle' u.id %}" data-confirm="{% if u.is_active %}Nonaktifkan akun {{ u.username }}? Karyawan tidak akan bisa login.{% else %}Aktifkan kembali akun {{ u.username }}?{% endif %}" data-confirm-title="Ubah status akun" data-confirm-ok="Ya, lanjutkan">{% csrf_token %}<button class="btn btn-ghost btn-sm" type="submit">{% if u.is_active %}Nonaktifkan{% else %}Aktifkan{% endif %}</button></form></div>
+    </article>
+    {% empty %}<div class="empty-state">Belum ada akun karyawan.</div>{% endfor %}
+  </div>
+  {% include 'components/pagination.html' with page_obj=page_obj %}
+</section>
+{% endblock %}

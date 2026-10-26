@@ -1,0 +1,27 @@
+{% extends 'admin_panel/base.html' %}
+{% load humanize %}
+{% block title %}Pengaturan & Harga{% endblock %}
+{% block page_heading %}Pengaturan & Harga{% endblock %}
+{% block content %}
+<section class="admin-page-head"><div><span class="admin-kicker">Kontrol sistem</span><h1>Atur identitas, struk, dan harga layanan.</h1><p>Perubahan harga berlaku untuk nota baru. Nota lama tetap menyimpan tarif saat transaksi dibuat.</p></div><a class="btn btn-secondary" href="{% url 'adminpanel:receipt_test' %}" target="_blank">Tes Struk</a></section>
+<div class="admin-grid-2 admin-settings-grid">
+  <section class="admin-panel-card admin-form-section">
+    <div class="admin-panel-head"><div><span>Identitas usaha</span><h2>Profil & Struk</h2></div></div>
+    <form method="post" class="form-stack">
+      {% csrf_token %}<input type="hidden" name="action" value="business_settings">
+      {% for field in settings_form %}
+      <div class="field {% if field.field.widget.input_type == 'checkbox' %}admin-check-field{% endif %}">{% if field.field.widget.input_type == 'checkbox' %}<label>{{ field }} <span>{{ field.label }}</span></label>{% else %}<label>{{ field.label }}</label>{{ field }}{% endif %}{% for error in field.errors %}<small class="field-error">{{ error }}</small>{% endfor %}</div>
+      {% endfor %}
+      <button class="btn btn-primary btn-block" type="submit">Simpan Identitas & Struk</button>
+    </form>
+  </section>
+  <section class="admin-panel-card admin-form-section">
+    <div class="admin-panel-head"><div><span>Harga dinamis</span><h2>Harga per Kilogram</h2></div></div>
+    <form method="post" class="form-stack">
+      {% csrf_token %}<input type="hidden" name="action" value="service_prices">
+      {% for field in price_form %}<div class="field"><label>{{ field.label }}</label><div class="price-input-wrap"><span>Rp</span>{{ field }}<b>/kg</b></div>{% if field.help_text %}<small class="form-help">{{ field.help_text }}</small>{% endif %}{% for error in field.errors %}<small class="field-error">{{ error }}</small>{% endfor %}</div>{% endfor %}
+      <button class="btn btn-primary btn-block" type="submit">Simpan Harga Layanan</button>
+    </form>
+  </section>
+</div>
+{% endblock %}

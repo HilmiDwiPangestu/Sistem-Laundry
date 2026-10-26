@@ -1,0 +1,43 @@
+{% extends 'layouts/base.html' %}
+{% block title %}Pelanggan - Sani Laundry{% endblock %}
+{% block content %}
+<section class="page-head split-head">
+  <div>
+    <p class="eyebrow">Data pelanggan</p>
+    <h1>Pelanggan</h1>
+    <p>Data ini untuk mempermudah pelanggan lama membuat nota berikutnya.</p>
+  </div>
+  <a class="btn btn-primary" href="{% url 'user:pelanggan_baru' %}">+ Tambah Pelanggan</a>
+</section>
+
+<section class="card compact-card">
+  <form method="get" class="search-row">
+    <div class="search-grow">
+      <label for="q">Cari pelanggan</label>
+      <input class="form-control" id="q" name="q" value="{{ query }}" placeholder="Nama atau alamat..." autofocus>
+    </div>
+    <button class="btn btn-secondary" type="submit">Cari</button>
+    {% if query %}<a class="btn btn-ghost" href="{% url 'user:pelanggan_list' %}">Reset</a>{% endif %}
+  </form>
+</section>
+
+<section class="customer-grid">
+  {% for p in pelanggan %}
+  <article class="customer-card">
+    <div class="customer-avatar">{{ p.nama|slice:":1"|upper }}</div>
+    <div class="customer-main">
+      <h3>{{ p.nama }}</h3>
+      <p>{{ p.get_jenis_plggn_display }}{% if p.alamat %} · {{ p.alamat }}{% endif %}</p>
+    </div>
+    <div class="customer-actions">
+      <a class="btn btn-ghost btn-sm" href="{% url 'user:pelanggan_edit' p.id %}">Edit</a>
+      <a class="btn btn-primary btn-sm" href="{% url 'user:buat_nota' p.id %}">Buat Nota</a>
+    </div>
+  </article>
+  {% empty %}
+  <div class="empty-card"><strong>Pelanggan tidak ditemukan.</strong><span>Tambahkan pelanggan baru jika diperlukan.</span></div>
+  {% endfor %}
+</section>
+
+{% include "components/pagination.html" with page_obj=page_obj %}
+{% endblock %}

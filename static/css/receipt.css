@@ -1,0 +1,180 @@
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+:root{--receipt-paper:58mm;--ink:#111;--muted:#555;--line:#222;--soft-line:#c9c9c9;--paper:#fff}
+body{font-family:Arial,"Helvetica Neue",sans-serif;background:#eceae4;color:var(--ink);font-size:11px;line-height:1.35;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.receipt-page{min-height:100vh;padding:72px 14px 28px}
+.receipt-toolbar{position:fixed;top:0;left:0;right:0;z-index:10;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:11px 18px;background:#24211f;color:#fff;box-shadow:0 2px 14px rgba(0,0,0,.16)}
+.receipt-toolbar a{color:#fff;text-decoration:none;font-weight:700}
+.receipt-toolbar-actions{display:flex;align-items:center;gap:10px}
+.receipt-toolbar span{font-size:11px;color:#d8d4cf}
+.receipt-toolbar button{border:0;border-radius:8px;background:#f3df00;color:#24211f;padding:9px 15px;font-weight:800;cursor:pointer}
+.thermal-receipt{width:var(--receipt-paper);max-width:100%;margin:0 auto;background:var(--paper);padding:4mm 3.4mm 5mm;box-shadow:0 12px 35px rgba(0,0,0,.15);font-variant-numeric:tabular-nums}
+.thermal-brand{text-align:center;padding-bottom:2.5mm}
+.thermal-brand img{display:block;width:16mm;height:auto;max-height:15mm;object-fit:contain;margin:0 auto 1.6mm}
+.thermal-brand h1{margin:0;font-size:15px;line-height:1.1;font-weight:900;letter-spacing:.02em;text-transform:uppercase}
+.thermal-brand p{margin:.55mm auto 0;font-size:8.8px;line-height:1.3;max-width:95%;overflow-wrap:anywhere}
+.thermal-brand .brand-tagline{font-weight:700;font-size:9px}
+.receipt-title{border-top:1.5px solid var(--line);border-bottom:1.5px solid var(--line);padding:2mm 0 1.8mm;text-align:center;display:grid;gap:.4mm}
+.receipt-title strong{font-size:10.5px;letter-spacing:.12em}
+.receipt-title span{font-size:11px;font-weight:800;letter-spacing:.03em}
+.receipt-section{padding:2.4mm 0;border-bottom:1px dashed var(--line)}
+.receipt-section h2{margin:0 0 1.4mm;font-size:8.7px;line-height:1.2;text-transform:uppercase;letter-spacing:.08em;font-weight:900}
+.receipt-detail-list{margin:0;display:grid;gap:.85mm}
+.receipt-detail-list>div{display:grid;grid-template-columns:minmax(0,40%) minmax(0,60%);gap:2mm;align-items:start}
+.receipt-detail-list dt{margin:0;color:#333}
+.receipt-detail-list dd{margin:0;text-align:right;font-weight:700;overflow-wrap:anywhere}
+.section-heading-row{display:flex;align-items:baseline;justify-content:space-between;gap:2mm;margin-bottom:1.4mm}
+.section-heading-row h2{margin:0}
+.section-heading-row>span{font-size:8.5px;font-weight:700;color:#333;white-space:nowrap}
+.receipt-item-table{border-top:1px solid var(--line)}
+.receipt-item-row{display:grid;grid-template-columns:3mm 8mm minmax(0,1fr);gap:1mm;align-items:start;padding:1.2mm 0;border-bottom:1px dotted var(--soft-line)}
+.receipt-item-row:last-child{border-bottom:0}
+.receipt-item-bullet{font-size:11px;line-height:1.25;font-weight:900}
+.receipt-item-name{min-width:0;display:grid;gap:.35mm}
+.receipt-item-name strong{font-size:9.4px;overflow-wrap:anywhere}
+.receipt-item-name small{font-size:8px;color:var(--muted);font-weight:400;overflow-wrap:anywhere}
+.receipt-item-qty{text-align:left;font-size:9.5px;font-weight:900;white-space:nowrap}
+.receipt-item-qty::after{content:"x"}
+.receipt-payment{border-bottom:0;padding-bottom:2mm}
+.payment-list{padding-bottom:1.5mm}
+.thermal-grand-total{border-top:1.5px solid var(--line);border-bottom:1.5px solid var(--line);padding:2mm 0;display:flex;justify-content:space-between;align-items:baseline;gap:3mm;text-transform:uppercase}
+.thermal-grand-total span{font-size:11px;font-weight:900;letter-spacing:.04em}
+.thermal-grand-total strong{font-size:16px;font-weight:900;text-align:right;white-space:nowrap}
+.thermal-footer{text-align:center;padding-top:2.8mm}
+.thermal-footer .footer-message{font-size:8.8px;font-weight:700;margin:0 0 1.3mm;line-height:1.35}
+.thermal-footer .receipt-note{font-size:8.3px;margin:0;color:#333;line-height:1.35}
+.footer-divider{border-top:1px solid var(--line);margin:2.3mm 0 1.6mm}
+.thermal-footer small{font-size:7.7px;color:#444;letter-spacing:.02em}
+.no-print{display:flex}
+@media(min-width:700px){.thermal-receipt[style*="80mm"]{font-size:11.5px}}
+@media(max-width:520px){.receipt-page{padding:64px 8px 18px}.receipt-toolbar{padding:9px 10px}.receipt-toolbar span{display:none}.thermal-receipt{box-shadow:0 7px 24px rgba(0,0,0,.12)}.receipt-toolbar button{min-height:40px}.receipt-back{white-space:nowrap}}
+@media print{
+  @page{size:var(--receipt-paper) auto;margin:0}
+  html,body{width:var(--receipt-paper);margin:0!important;padding:0!important;background:#fff!important}
+  .receipt-page{min-height:0;padding:0!important}
+  .no-print{display:none!important}
+  .thermal-receipt{width:var(--receipt-paper);max-width:none;margin:0;padding:3mm 3mm 4mm;box-shadow:none!important}
+}
+
+/* v26 - Status dihapus dari struk konsumen dan arsip laundry; status tetap ada pada struk item. */
+.receipt-bundle-page{padding-bottom:42px}
+.receipt-bundle{display:grid;gap:22px;justify-items:center}
+.receipt-copy{position:relative}
+.receipt-copy-label{margin:-1mm -1mm 2.4mm;padding:1.4mm 1.5mm;border:1.2px solid var(--line);text-align:center;font-size:8.3px;line-height:1.15;font-weight:900;letter-spacing:.12em;text-transform:uppercase}
+.receipt-copy-label-item{background:#f1f1f1}
+.thermal-brand-compact{padding-bottom:2mm}
+.thermal-brand-compact img{width:13mm;max-height:12mm;margin-bottom:1mm}
+.thermal-brand-compact h1{font-size:13px}
+.receipt-item-total{display:grid;gap:1mm}
+.receipt-item-total>div{display:flex;align-items:baseline;justify-content:space-between;gap:3mm}
+.receipt-item-total span{color:#333}
+.receipt-item-total strong{text-align:right}
+.receipt-cut-line{position:relative;margin:4mm -3.4mm -5mm;padding:3.6mm 0 2.3mm;border-top:1px dashed #777;text-align:center;color:#666;font-size:7px;letter-spacing:.08em;text-transform:uppercase}
+.receipt-cut-line span{background:#fff;padding:0 2mm}
+.receipt-toolbar-copy-links{display:flex;align-items:center;gap:5px;flex:1;justify-content:center}
+.receipt-toolbar-copy-links a{display:inline-flex;align-items:center;justify-content:center;min-height:30px;padding:5px 8px;border:1px solid rgba(255,255,255,.22);border-radius:7px;color:#eee!important;font-size:10px;font-weight:700;line-height:1;text-decoration:none;white-space:nowrap}
+.receipt-toolbar-copy-links a.active{background:#fff;color:#24211f!important;border-color:#fff}
+.receipt-empty-message{width:min(520px,calc(100% - 24px));margin:30px auto;padding:22px;border-radius:14px;background:#fff;box-shadow:0 10px 28px rgba(0,0,0,.1);display:grid;gap:8px;text-align:center}
+.receipt-empty-message strong{font-size:16px}
+.receipt-empty-message span{color:#666}
+.receipt-empty-message a{justify-self:center;margin-top:5px;color:#24211f;font-weight:800}
+
+@media(max-width:640px){
+  .receipt-toolbar{display:grid;grid-template-columns:auto 1fr;gap:7px 10px;align-items:center}
+  .receipt-toolbar-copy-links{grid-column:1/-1;grid-row:2;justify-content:flex-start;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:1px;scrollbar-width:none}
+  .receipt-toolbar-copy-links::-webkit-scrollbar{display:none}
+  .receipt-toolbar-actions{justify-self:end}
+  .receipt-page.receipt-bundle-page{padding-top:102px}
+  .receipt-bundle{gap:16px}
+}
+
+@media print{
+  .receipt-bundle{display:block}
+  .receipt-copy{break-inside:avoid;page-break-inside:avoid}
+  .receipt-copy:not(:last-child){break-after:page;page-break-after:always}
+  .receipt-copy-label{margin-top:0}
+  .receipt-cut-line{margin-bottom:-4mm}
+}
+
+
+/* v31 - direct local ESC/POS and Android BLE printing controls */
+.receipt-toolbar-actions{flex-wrap:wrap;justify-content:flex-end}
+.receipt-toolbar-actions button{font-size:10px;line-height:1.15;padding:8px 10px;white-space:nowrap}
+.receipt-toolbar-actions .receipt-toolbar-secondary{background:#fff;color:#24211f;border:1px solid rgba(255,255,255,.25)}
+.receipt-print-status{position:fixed;z-index:20;left:50%;bottom:18px;transform:translateX(-50%);width:min(680px,calc(100% - 24px));margin:0;padding:11px 14px;border:1px solid #d8d2c7;border-radius:10px;background:#fff;color:#24211f;box-shadow:0 8px 28px rgba(0,0,0,.2);font-size:12px;line-height:1.45}
+.receipt-print-status[data-status-type="error"]{border-color:#d78a83;background:#fff4f2}
+.receipt-print-status[data-status-type="success"]{border-color:#a8c8a8;background:#f4fff4}
+@media(max-width:640px){
+  .receipt-toolbar-actions{grid-column:1/-1;justify-self:stretch;display:grid;grid-template-columns:1fr 1fr;gap:6px}
+  .receipt-toolbar-actions>span{display:none}
+  .receipt-toolbar-actions button{width:100%;white-space:normal;min-height:38px}
+  .receipt-toolbar-actions button:first-of-type{grid-column:1/-1}
+  .receipt-print-status{bottom:max(12px,env(safe-area-inset-bottom))}
+}
+
+
+/* v32 - clarify the difference between browser-driver layout printing and text-only ESC/POS. */
+.receipt-print-hint{position:fixed;z-index:9;top:54px;left:50%;transform:translateX(-50%);width:min(760px,calc(100% - 24px));margin:0;padding:7px 10px;border:1px solid #d8d2c7;border-radius:8px;background:#fff;color:#24211f;box-shadow:0 4px 14px rgba(0,0,0,.12);font-size:10px;line-height:1.4;text-align:center}
+@media(max-width:640px){.receipt-print-hint{top:98px;font-size:9px}.receipt-page.receipt-bundle-page{padding-top:146px}}
+@media print{.receipt-print-hint{display:none!important}.receipt-bundle{width:100%;margin:0;padding:0}.thermal-receipt{break-inside:avoid;page-break-inside:avoid}}
+
+
+/* v39 - shorter receipt footer and clearer consumer total. */
+.receipt-copy-customer .thermal-grand-total{padding:2.7mm 0;gap:2mm}
+.receipt-copy-customer .thermal-grand-total span{font-size:13px;font-weight:900}
+.receipt-copy-customer .thermal-grand-total strong{font-size:21px;font-weight:900;letter-spacing:-.025em}
+.receipt-copy-items .thermal-footer .receipt-note{font-size:8px}
+
+
+/* v48 - modestly larger text for driver and raster/Bluetooth without restoring edge clipping. */
+.receipt-copy-items .receipt-item-row{padding:1.25mm 0;gap:.8mm;grid-template-columns:2.5mm 7mm minmax(0,1fr)}
+.receipt-copy-items .receipt-item-name{gap:.55mm;min-width:0}
+.receipt-copy-items .receipt-item-name strong{font-size:9.6px;line-height:1.3;color:#000;font-weight:800;overflow-wrap:anywhere;word-break:break-word}
+.receipt-copy-items .receipt-item-name small{display:block;font-size:8.8px;line-height:1.35;color:#000;font-weight:600;margin-top:.3mm;white-space:normal;overflow-wrap:anywhere;word-break:break-word}
+.receipt-copy-items .receipt-item-qty{font-size:9.2px;line-height:1.3}
+.receipt-copy-items .receipt-item-bullet{font-size:10.5px;line-height:1.3}
+.receipt-copy-customer .thermal-grand-total{padding:2mm 0;gap:1.5mm}
+.receipt-copy-customer .thermal-grand-total span{font-size:11.5px;font-weight:900}
+.receipt-copy-customer .thermal-grand-total strong{font-size:17px;font-weight:900;letter-spacing:-.02em;white-space:normal;overflow-wrap:anywhere}
+@media print{
+  /* Keep the complete 58 mm paper inside the printable area of a 57 mm roll.
+     Most compact printers have about 48 mm effective print width. */
+  .thermal-receipt{box-sizing:border-box!important;width:var(--receipt-paper)!important;max-width:var(--receipt-paper)!important;padding:2.5mm 5mm 3mm!important;overflow:visible!important}
+  .receipt-copy-items .receipt-item-row{padding:1mm 0;grid-template-columns:2.3mm 6.5mm minmax(0,1fr);gap:.7mm}
+  .receipt-copy-items .receipt-item-name strong{font-size:9px;line-height:1.25}
+  .receipt-copy-items .receipt-item-name small{font-size:8.3px;line-height:1.3;font-weight:600}
+  .receipt-copy-items .receipt-item-qty{font-size:8.7px}
+  .receipt-copy-items .receipt-item-bullet{font-size:9.5px}
+  .receipt-copy-customer .thermal-grand-total span{font-size:10.5px}
+  .receipt-copy-customer .thermal-grand-total strong{font-size:16px}
+  .thermal-footer .footer-message{font-size:8px}
+  .thermal-footer .receipt-note{font-size:7.6px}
+}
+
+
+/* v52 - mirror @media print styles when the same receipt is rasterized for
+   direct Windows Bridge and Android BLE, so all output paths share one layout. */
+body.receipt-raster-mode .thermal-receipt{
+  box-sizing:border-box!important;
+  width:var(--receipt-paper)!important;
+  max-width:var(--receipt-paper)!important;
+  padding:2.5mm 5mm 3mm!important;
+  overflow:visible!important;
+  box-shadow:none!important;
+}
+body.receipt-raster-mode .receipt-copy-items .receipt-item-row{
+  padding:1mm 0!important;
+  grid-template-columns:2.3mm 6.5mm minmax(0,1fr)!important;
+  gap:.7mm!important;
+}
+body.receipt-raster-mode .receipt-copy-items .receipt-item-name strong{font-size:9px!important;line-height:1.25!important}
+body.receipt-raster-mode .receipt-copy-items .receipt-item-name small{font-size:8.3px!important;line-height:1.3!important;font-weight:600!important}
+body.receipt-raster-mode .receipt-copy-items .receipt-item-qty{font-size:8.7px!important}
+body.receipt-raster-mode .receipt-copy-items .receipt-item-bullet{font-size:9.5px!important}
+body.receipt-raster-mode .receipt-copy-customer .thermal-grand-total span{font-size:10.5px!important}
+body.receipt-raster-mode .receipt-copy-customer .thermal-grand-total strong{font-size:16px!important}
+body.receipt-raster-mode .thermal-footer .footer-message{font-size:8px!important}
+body.receipt-raster-mode .thermal-footer .receipt-note{font-size:7.6px!important}
+body.receipt-raster-mode .receipt-cut-line{margin-bottom:-4mm!important}
+
+/* v54 - sequential print mode: each receipt is printed separately and pauses for manual tearing. */

@@ -1,71 +1,9 @@
 {% extends 'layouts/base.html' %}
-
+{% load laundry_extras %}
+{% block title %}Detail Item #{{ nota.id }} - Sani Laundry{% endblock %}
 {% block content %}
-  <div class="max-w-5xl mx-auto px-4">
-    <!-- HEADER -->
-    <div class="mb-8">
-      <h1 class="text-2xl font-bold text-slate-900 dark:text-slate-100">Detail Item Nota</h1>
-      <p class="text-slate-500 dark:text-slate-400 text-sm">Informasi item pakaian pelanggan</p>
-    </div>
-
-    <!-- INFO NOTA -->
-    <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm mb-6">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-        <div>
-          <span class="text-slate-500">Pelanggan</span>
-          <p class="font-semibold text-slate-900 dark:text-slate-100">{{ nota.pelanggan.nama }}</p>
-        </div>
-
-        <div>
-          <span class="text-slate-500">Tanggal Masuk</span>
-          <p class="font-semibold text-slate-900 dark:text-slate-100">{{ nota.tgl }}</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- TABLE -->
-    <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
-      <!-- TABLE HEADER -->
-      <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
-        <h2 class="font-semibold text-slate-900 dark:text-slate-100">Daftar Item Pakaian</h2>
-      </div>
-
-      <!-- TABLE CONTENT -->
-      <div class="overflow-x-auto">
-        <table class="w-full text-sm">
-          <thead class="bg-slate-50 dark:bg-slate-800/40 text-slate-500 dark:text-slate-400">
-            <tr>
-              <th class="px-6 py-3 text-left font-semibold">No</th>
-              <th class="px-6 py-3 text-left font-semibold">Jenis Pakaian</th>
-              <th class="px-6 py-3 text-center font-semibold">Jumlah</th>
-              <th class="px-6 py-3 text-left font-semibold">Catatan</th>
-            </tr>
-          </thead>
-
-          <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
-            {% for item in items %}
-              <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition">
-                <td class="px-6 py-4">{{ forloop.counter }}</td>
-
-                <td class="px-6 py-4 font-medium text-slate-900 dark:text-slate-100">{{ item.get_jenis_display }}</td>
-
-                <td class="px-6 py-4 text-center">{{ item.jumlah }}</td>
-
-                <td class="px-6 py-4 text-slate-500">{{ item.catatan|default:'-' }}</td>
-              </tr>
-            {% empty %}
-              <tr>
-                <td colspan="4" class="py-10 text-center text-slate-400">Tidak ada item</td>
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- ACTION -->
-    <div class="mt-6">
-      <a href="{% url 'item:data_item' %}" class="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline">← Kembali ke Nota</a>
-    </div>
-  </div>
+<section class="page-head split-head"><div><a class="back-link" href="{% url 'item:data_item' %}">← Kembali ke data item</a><h1>Detail Item Nota #{{ nota.id }}</h1><p>{{ nota.pelanggan.nama }} · {{ nota.berat|kg }} · {{ nota.harga|rupiah }}</p></div><a class="btn btn-primary" href="{% url 'user:tambah_item' nota.id %}">Kelola Item</a></section>
+<section class="mini-stats"><div><span>Total jenis</span><strong>{{ total_jenis }}</strong></div><div><span>Total pakaian</span><strong>{{ total_item }}</strong></div><div><span>Status</span><strong>{{ nota.get_status_display }}</strong></div></section>
+<section class="card"><div class="table-wrap"><table><thead><tr><th>No</th><th>Jenis pakaian</th><th>Jumlah</th><th>Catatan</th></tr></thead><tbody>{% for item in items %}<tr><td>{{ page_obj.start_index|add:forloop.counter0 }}</td><td><strong>{{ item.get_jenis_display }}</strong></td><td>{{ item.jumlah }}</td><td>{{ item.catatan|default:"-" }}</td></tr>{% empty %}<tr><td colspan="4"><div class="empty-state">Belum ada item pakaian pada nota ini.</div></td></tr>{% endfor %}</tbody></table></div></section>
+{% include "components/pagination.html" with page_obj=page_obj %}
 {% endblock %}

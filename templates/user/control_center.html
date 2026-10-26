@@ -1,0 +1,204 @@
+{% extends 'admin_panel/base.html' %}
+{% load static laundry_extras %}
+{% block title %}Control Center{% endblock %}
+{% block page_heading %}Control Center & Printer{% endblock %}
+{% block body_class %}admin-control-center-page{% endblock %}
+{% block content %}
+<section class="page-head control-head">
+  <div>
+    <p class="eyebrow">Pengaturan internal</p>
+    <h1>Control Center</h1>
+    <p>Atur harga layanan, identitas struk, dan printer thermal dari satu tempat.</p>
+  </div>
+  <div class="control-head-actions">
+    <a class="btn btn-ghost" target="_blank" rel="noopener" href="{% url receipt_test_url_name %}">Preview 3 Struk Tes</a>
+    <a class="btn btn-primary" target="_blank" rel="noopener" href="{% url receipt_test_url_name %}?autoprint=1">Tes Print 3 Struk</a>
+  </div>
+</section>
+
+<section class="control-overview">
+  <article class="control-overview-card">
+    <span>Printer</span>
+    <strong>{{ laundry_settings.lebar_kertas }} mm</strong>
+    <small>Lebar kertas struk aktif</small>
+  </article>
+  <article class="control-overview-card">
+    <span>Express · semua jenis</span>
+    <strong>{{ harga_layanan.express|rupiah }}</strong>
+    <small>tarif per kg untuk semua jenis laundry</small>
+  </article>
+  <article class="control-overview-card">
+    <span>Reguler · Cuci Setrika</span>
+    <strong>{{ harga_layanan.reguler_cuci_setrika|rupiah }}</strong>
+    <small>tarif per kg; jenis reguler lain ada di bawah</small>
+  </article>
+  <article class="control-overview-card">
+    <span>Struk terakhir</span>
+    {% if latest_nota %}
+      <strong>{{ latest_nota.nomor_struk }}</strong>
+      <small><a href="{% url 'user:nota_receipt' latest_nota.id %}" target="_blank" rel="noopener">Buka preview →</a></small>
+    {% else %}
+      <strong>Belum ada</strong><small>Belum ada transaksi</small>
+    {% endif %}
+  </article>
+</section>
+
+<div class="control-grid">
+  <section class="card control-card">
+    <div class="card-head control-card-head">
+      <div>
+        <span class="control-kicker">01</span>
+        <h2>Struk & Printer</h2>
+        <p>Data ini otomatis dipakai pada semua struk nota.</p>
+      </div>
+    </div>
+    <form method="post" class="control-form" data-confirm="Simpan perubahan pengaturan struk dan printer?" data-confirm-title="Simpan pengaturan" data-confirm-ok="Ya, simpan">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="receipt_settings">
+
+      <div class="control-form-grid">
+        <div class="field">
+          <label for="{{ settings_form.nama_usaha.id_for_label }}">{{ settings_form.nama_usaha.label }}</label>
+          {{ settings_form.nama_usaha }}
+          {% for error in settings_form.nama_usaha.errors %}<small class="field-error">{{ error }}</small>{% endfor %}
+        </div>
+        <div class="field">
+          <label for="{{ settings_form.slogan.id_for_label }}">{{ settings_form.slogan.label }}</label>
+          {{ settings_form.slogan }}
+          {% for error in settings_form.slogan.errors %}<small class="field-error">{{ error }}</small>{% endfor %}
+        </div>
+        <div class="field control-span-2">
+          <label for="{{ settings_form.alamat.id_for_label }}">{{ settings_form.alamat.label }}</label>
+          {{ settings_form.alamat }}
+          {% for error in settings_form.alamat.errors %}<small class="field-error">{{ error }}</small>{% endfor %}
+        </div>
+        <div class="field">
+          <label for="{{ settings_form.telepon.id_for_label }}">{{ settings_form.telepon.label }}</label>
+          {{ settings_form.telepon }}
+          {% for error in settings_form.telepon.errors %}<small class="field-error">{{ error }}</small>{% endfor %}
+        </div>
+        <div class="field">
+          <label for="{{ settings_form.lebar_kertas.id_for_label }}">{{ settings_form.lebar_kertas.label }}</label>
+          {{ settings_form.lebar_kertas }}
+          <small class="field-help">Pilih 58 mm atau 80 mm sesuai printer.</small>
+          {% for error in settings_form.lebar_kertas.errors %}<small class="field-error">{{ error }}</small>{% endfor %}
+        </div>
+        <div class="field control-span-2">
+          <label for="{{ settings_form.footer_struk.id_for_label }}">{{ settings_form.footer_struk.label }}</label>
+          {{ settings_form.footer_struk }}
+          {% for error in settings_form.footer_struk.errors %}<small class="field-error">{{ error }}</small>{% endfor %}
+        </div>
+      </div>
+
+      <div class="control-toggle-row">
+        <label class="control-toggle">{{ settings_form.tampilkan_logo }}<span><strong>Tampilkan logo</strong><small>Logo Sani Laundry tampil di bagian atas struk.</small></span></label>
+        <label class="control-toggle">{{ settings_form.tampilkan_item }}<span><strong>Tampilkan jumlah pakaian</strong><small>Jumlah pakaian tampil pada struk konsumen. Struk item tetap dibuat otomatis saat rincian pakaian tersedia.</small></span></label>
+      </div>
+
+      <div class="control-form-actions">
+        <button class="btn btn-primary" type="submit">Simpan Pengaturan Struk</button>
+        <a class="btn btn-ghost" target="_blank" rel="noopener" href="{% url receipt_test_url_name %}">Lihat Preview</a>
+      </div>
+    </form>
+  </section>
+
+  <section class="card control-card">
+    <div class="card-head control-card-head">
+      <div>
+        <span class="control-kicker">02</span>
+        <h2>Harga Layanan</h2>
+        <p>Tarif baru hanya berlaku untuk nota yang dibuat setelah harga diubah.</p>
+      </div>
+    </div>
+    <form method="post" class="control-form" data-confirm="Simpan harga layanan baru? Harga baru hanya berlaku untuk nota berikutnya." data-confirm-title="Simpan harga layanan" data-confirm-ok="Ya, simpan harga">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="service_prices">
+      <div class="control-price-list">
+        {% for field in price_form %}
+        <label class="control-price-row" for="{{ field.id_for_label }}">
+          <span><strong>{{ field.label }}</strong>{% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}</span>
+          <div class="control-price-input"><b>Rp</b>{{ field }}<em>/kg</em></div>
+          {% for error in field.errors %}<small class="field-error">{{ error }}</small>{% endfor %}
+        </label>
+        {% endfor %}
+      </div>
+      <div class="rounding-note control-rounding-note">
+        <strong>Pembulatan otomatis</strong>
+        <span>Sisa Rp500 ke bawah turun, di atas Rp500 naik ke ribuan berikutnya.</span>
+      </div>
+      <div class="control-form-actions">
+        <button class="btn btn-primary" type="submit">Simpan Harga</button>
+      </div>
+    </form>
+  </section>
+
+  <aside class="card control-guide-card">
+    <div class="card-head control-card-head">
+      <div><span class="control-kicker">03</span><h2>Printer Thermal</h2><p>Pilih jalur cetak sesuai koneksi dan protokol printer.</p></div>
+    </div>
+    <div class="control-guide-list">
+      <div><b>1</b><span><strong>Driver Windows / Browser</strong><small>Mode paling kompatibel untuk USB atau Bluetooth yang sudah dipasangkan di Windows. Pilih printer saat dialog cetak muncul.</small></span></div>
+      <div><b>2</b><span><strong>ESC/POS langsung di Windows</strong><small>Jalankan Printer Bridge jika printer mendukung data RAW ESC/POS. Mode ini mengirim teks, bukan gambar/logo.</small></span></div>
+      <div><b>3</b><span><strong>Bluetooth Android (BLE)</strong><small>Gunakan Chrome Android melalui HTTPS. Hanya printer BLE yang membuka karakteristik tulis yang didukung.</small></span></div>
+      <div><b>4</b><span><strong>Bluetooth klasik / SPP</strong><small>Browser tidak bisa mengakses SPP langsung. Gunakan aplikasi layanan cetak Android atau aplikasi resmi printer, lalu cetak dari browser.</small></span></div>
+    </div>
+    <div class="control-tip">
+      <strong>Catatan</strong>
+      <p>Gunakan Cetak via Driver/Browser sebagai pilihan utama. Printer Bridge lokal dan BLE merupakan opsi langsung yang bergantung pada dukungan protokol printer. Jika hasil cetak tidak benar, kembali ke mode driver/browser.</p>
+    </div>
+  </aside>
+
+
+
+  <aside class="card control-guide-card control-bridge-card" data-printer-bridge-panel>
+    <div class="card-head control-card-head">
+      <div><span class="control-kicker">04</span><h2>Printer Lokal Windows</h2><p>Cetak ESC/POS langsung melalui antrean printer di komputer kasir.</p></div>
+    </div>
+    <div class="control-bridge-content">
+      <div class="field">
+        <label for="printer-bridge-token">Token Printer Bridge</label>
+        <input id="printer-bridge-token" class="form-control" type="password" autocomplete="off" spellcheck="false" data-bridge-token placeholder="Tempel token dari jendela Printer Bridge">
+        <small class="field-help">Token disimpan hanya di browser ini, bukan ke database aplikasi.</small>
+      </div>
+      <div class="field">
+        <label for="printer-bridge-printer">Printer Windows</label>
+        <select id="printer-bridge-printer" class="form-control" data-bridge-printer>
+          <option value="">Muat daftar printer terlebih dahulu</option>
+        </select>
+      </div>
+      <div class="control-bridge-actions">
+        <button class="btn btn-ghost" type="button" data-bridge-check>Periksa Koneksi</button>
+        <button class="btn btn-ghost" type="button" data-bridge-refresh>Muat Printer</button>
+        <button class="btn btn-primary" type="button" data-bridge-save>Simpan Pengaturan Lokal</button>
+      </div>
+      <p class="control-bridge-status" data-print-status role="status" aria-live="polite" hidden></p>
+      <div class="control-tip">
+        <strong>Aktivasi pertama kali</strong>
+        <p>Di komputer kasir Windows, jalankan <code>start_printer_bridge.bat</code>. Salin token yang tampil di jendela hitam ke kolom di atas. Pastikan printer sudah muncul di Windows. Mode ESC/POS mengirim teks mentah, jadi gunakan hanya jika printer mendukung ESC/POS RAW; bila tidak, pilih Cetak melalui Driver/Browser.</p>
+      </div>
+    </div>
+  </aside>
+
+  <aside class="card control-guide-card app-install-card">
+    <div class="card-head control-card-head">
+      <div><span class="control-kicker">05</span><h2>Aplikasi Perangkat</h2><p>Pasang Sani Laundry seperti aplikasi tanpa APK terpisah.</p></div>
+    </div>
+    <div class="app-install-content">
+      <div class="app-install-icon"><img src="{% static 'pwa/icon-192.png' %}" alt="Ikon aplikasi Sani Laundry"></div>
+      <div class="app-install-copy">
+        <strong>Sani Laundry Internal</strong>
+        <span>Bisa dipasang di Android, iPhone/iPad, Windows, dan macOS melalui browser yang mendukung PWA.</span>
+      </div>
+      <button class="btn btn-primary btn-block" type="button" data-install-app>Pasang Aplikasi</button>
+      <div class="control-tip app-install-tip">
+        <strong>iPhone / iPad</strong>
+        <p>Buka melalui Safari → Bagikan → Tambahkan ke Layar Utama.</p>
+      </div>
+    </div>
+  </aside>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'js/thermal-print.js' %}?v=50" defer></script>
+{% endblock %}

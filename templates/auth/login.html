@@ -1,0 +1,67 @@
+{% load static %}
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f3df00">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Sani Laundry">
+  <title>Masuk Sistem - Sani Laundry</title>
+  <link rel="icon" type="image/png" href="{% static 'img/sani-laundry-logo.png' %}">
+  <link rel="apple-touch-icon" href="{% static 'pwa/apple-touch-icon.png' %}">
+  <link rel="manifest" href="{% static 'pwa/manifest.webmanifest' %}">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.26.25/dist/sweetalert2.min.css">
+  <link rel="stylesheet" href="{% static 'css/app.css' %}?v=28">
+</head>
+<body class="login-page">
+  <main class="login-shell">
+    <section class="login-visual" aria-hidden="true">
+      <div class="login-visual-content">
+        <span class="login-kicker">SANI LAUNDRY</span>
+        <h1>Operasional laundry dibuat lebih cepat dan sederhana.</h1>
+        <p>Sistem terbagi menjadi website publik, panel karyawan untuk operasional, dan Admin Center untuk kontrol penuh.</p>
+        <div class="login-feature-row">
+          <span>Panel Karyawan</span><span>Admin Center</span><span>Website Dinamis</span>
+        </div>
+      </div>
+      <div class="visual-bubble bubble-one"></div><div class="visual-bubble bubble-two"></div>
+    </section>
+
+    <section class="login-panel">
+      <div class="login-card">
+        <div class="login-brand">
+          <span class="login-logo-wrap"><img src="{% static 'img/sani-laundry-logo.png' %}" alt="Logo Sani Laundry" width="88" height="88"></span>
+          <div><h2>Selamat datang</h2><p>Masuk sebagai karyawan atau admin.</p></div>
+        </div>
+
+        {% if form.errors %}
+          <div class="alert alert-error">Username atau password salah. Silakan periksa kembali.</div>
+        {% endif %}
+
+        <form method="post" class="form-stack login-form">
+          {% csrf_token %}
+          {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+          <div class="field">
+            <label for="id_username">Username</label>
+            {{ form.username }}
+          </div>
+          <div class="field">
+            <label for="id_password">Password</label>
+            <div class="password-wrap">{{ form.password }}<button type="button" class="password-toggle" data-password-toggle aria-label="Tampilkan password">Lihat</button></div>
+          </div>
+          <button class="btn btn-primary btn-block btn-login" type="submit">Masuk ke Sistem</button>
+        </form>
+
+        <div class="login-note"><span aria-hidden="true">●</span><p>Sistem akan mengarahkan akun karyawan ke operasional dan akun admin ke Admin Center.</p></div><a class="btn btn-ghost btn-block" href="{% url 'landing' %}">← Kembali ke Website</a>
+        <button class="btn btn-ghost btn-block login-install" type="button" data-install-app hidden>Pasang sebagai Aplikasi</button>
+      </div>
+    </section>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.26.25/dist/sweetalert2.min.js" defer></script>
+  <script src="{% static 'js/alerts.js' %}?v=28" defer></script>
+  <script src="{% static 'js/app.js' %}?v=28" defer></script>
+</body>
+</html>

@@ -1,52 +1,29 @@
-{% extends 'layouts/base_user.html' %}
-
+{% extends 'layouts/base.html' %}
+{% block title %}Nota Baru - Sani Laundry{% endblock %}
 {% block content %}
-  <div class="w-full max-w-lg mx-auto mt-8">
-    <div class="bg-white dark:bg-slate-900 p-6 rounded-xl shadow border border-slate-200 dark:border-slate-800">
-      <h2 class="font-bold text-lg text-center mb-4">Buat Nota Laundry</h2>
+<section class="page-head">
+  <a class="back-link" href="{% url 'user:pelanggan_list' %}">← Ganti pelanggan</a>
+  <h1>Buat Nota Baru</h1>
+  <p>Pelanggan: <strong>{{ pelanggan.nama }}</strong> · {{ pelanggan.get_jenis_plggn_display }}</p>
+</section>
 
-      <div class="mb-1 text-sm text-slate-500">
-        Nama:
-        <span class="font-semibold text-slate-800 dark:text-white">{{ pelanggan.nama }}</span>
+<section class="card form-card">
+  <form method="post" class="form-stack">
+    {% csrf_token %}
+    <div class="form-grid-2">
+      {% for field in form %}
+      <div class="field {% if field.name == 'tgl' %}span-2-mobile{% endif %}">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% for error in field.errors %}<small class="field-error">{{ error }}</small>{% endfor %}
+      </div>
+      {% endfor %}
     </div>
-
-    <div class="mb-4 text-sm text-slate-500">
-        Jenis Pelanggan: 
-        <span class="font-semibold text-slate-800 dark:text-white">{{ pelanggan.get_jenis_plggn_display }}</span>
+    {% if form.non_field_errors %}<div class="alert alert-error">{{ form.non_field_errors }}</div>{% endif %}
+    <div class="form-actions">
+      <a class="btn btn-ghost" href="{% url 'user:pelanggan_list' %}">Batal</a>
+      <button class="btn btn-primary" type="submit">Simpan & Input Pakaian</button>
     </div>
-
-      <form method="post">
-        {% csrf_token %}
-
-        <div class="space-y-4">
-          <div>
-            <label class="text-sm font-medium">Berat (Kg)</label>
-            {{ form.berat }}
-          </div>
-
-          <div>
-            <label class="text-sm font-medium">Jenis Laundry</label>
-            {{ form.jenis }}
-          </div>
-
-          <div>
-            <label class="text-sm font-medium">Layanan</label>
-            {{ form.layanan }}
-          </div>
-
-          <div>
-            <label class="text-sm font-medium">Harga</label>
-            {{ form.harga }}
-          </div>
-
-          <div>
-            <label class="text-sm font-medium">Tanggal</label>
-            {{ form.tgl }}
-          </div>
-        </div>
-
-        <button type="submit" class="mt-6 w-full py-2 bg-primary text-white rounded-lg font-semibold hover:opacity-90">Simpan Nota</button>
-      </form>
-    </div>
-  </div>
+  </form>
+</section>
 {% endblock %}

@@ -1,0 +1,15 @@
+{% extends 'admin_panel/base.html' %}
+{% block title %}Pelanggan{% endblock %}
+{% block page_heading %}Kelola Pelanggan{% endblock %}
+{% block content %}
+<section class="admin-page-head"><div><span class="admin-kicker">Operasional</span><h1>Data Pelanggan</h1><p>Admin dapat menambah dan memperbarui data pelanggan tanpa masuk ke panel karyawan.</p></div><div class="admin-head-actions"><a class="btn btn-primary" href="{% url 'adminpanel:customer_create' %}">+ Tambah Pelanggan</a></div></section>
+
+<section class="admin-panel-card admin-filter-card"><form method="get" class="admin-search-row"><input class="form-control" name="q" value="{{ query }}" placeholder="Cari nama atau alamat pelanggan"><button class="btn btn-secondary" type="submit">Cari</button>{% if query %}<a class="btn btn-ghost" href="{% url 'adminpanel:customers' %}">Reset</a>{% endif %}</form></section>
+
+<section class="admin-customer-grid">
+  {% for p in pelanggan %}
+  <article class="admin-customer-card"><div class="admin-customer-avatar">{{ p.nama|slice:':1'|upper }}</div><div><h3>{{ p.nama }}</h3><p>{{ p.get_jenis_plggn_display }}{% if p.alamat %} · {{ p.alamat }}{% endif %}</p></div><a class="btn btn-ghost btn-sm" href="{% url 'adminpanel:customer_edit' p.id %}">Edit</a></article>
+  {% empty %}<div class="empty-card"><strong>Pelanggan tidak ditemukan.</strong><span>Tambahkan data pelanggan baru jika diperlukan.</span></div>{% endfor %}
+</section>
+{% include 'components/pagination.html' with page_obj=page_obj %}
+{% endblock %}

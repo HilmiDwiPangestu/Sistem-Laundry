@@ -1,190 +1,65 @@
-{% extends 'layouts/base_user.html' %}
-
+{% extends 'layouts/base.html' %}
+{% load laundry_extras %}
+{% block title %}Item Nota #{{ nota.id }} - Sani Laundry{% endblock %}
 {% block content %}
-
-{{ form.media }}
-
-<div class="w-full max-w-5xl mx-auto mt-8 space-y-6 px-4">
-
-  <!-- ================= HEADER ================= -->
-
-  <div class="flex items-center justify-between">
-
-
-<div class="flex items-center gap-3">
-  <a href="{% url 'user:user_index' %}"
-    class="inline-flex items-center gap-2 px-3 py-2 text-sm bg-slate-100 dark:bg-slate-800 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition">
-
-    <span class="material-symbols-outlined text-base">arrow_back</span>
-    Kembali
-  </a>
-
-  <h2 class="text-lg font-semibold text-slate-800 dark:text-white">
-    Tambah Item Laundry
-  </h2>
-</div>
-
-
+<section class="page-head split-head">
+  <div>
+    <a class="back-link" href="{% url 'nota:data_nota' %}">← Kembali ke daftar nota</a>
+    <h1>Item Nota #{{ nota.id }}</h1>
+    <p><strong>{{ nota.pelanggan.nama }}</strong> · {{ nota.get_jenis_display }} · {{ nota.berat|kg }} · {{ nota.harga|rupiah }}</p>
   </div>
+  <span class="badge badge-lg {% if nota.status == 'Sudah' %}badge-success{% else %}badge-warning{% endif %}">{{ nota.get_status_display }}</span>
+</section>
 
-  <!-- ================= FORM CARD ================= -->
-
-  <div class="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 space-y-6">
-
-
-<!-- Info Nota -->
-<div class="grid md:grid-cols-3 gap-4">
-
-  <div class="bg-slate-50 dark:bg-slate-800/40 p-4 rounded-lg">
-    <p class="text-xs text-slate-500">Pelanggan</p>
-    <p class="font-semibold text-slate-800 dark:text-white">
-      {{ nota.pelanggan.nama }}
-    </p>
-  </div>
-
-  <div class="bg-slate-50 dark:bg-slate-800/40 p-4 rounded-lg">
-    <p class="text-xs text-slate-500">Berat Laundry</p>
-    <p class="font-semibold text-slate-800 dark:text-white">
-      {{ nota.berat }} Kg
-    </p>
-  </div>
-
-  <div class="bg-slate-50 dark:bg-slate-800/40 p-4 rounded-lg">
-    <p class="text-xs text-slate-500">Tanggal</p>
-    <p class="font-semibold text-slate-800 dark:text-white">
-      {{ nota.tgl }}
-    </p>
-  </div>
-
-</div>
-
-<!-- Form -->
-<form method="POST" class="space-y-5">
-  {% csrf_token %}
-
-  <div class="grid md:grid-cols-3 gap-4">
-
-    <div class="flex flex-col gap-2">
-      <label class="text-sm font-medium text-slate-600 dark:text-slate-300">
-        Jenis Pakaian
-      </label>
-      {{ form.jenis }}
-    </div>
-
-    <div class="flex flex-col gap-2">
-      <label class="text-sm font-medium text-slate-600 dark:text-slate-300">
-        Jumlah
-      </label>
-      {{ form.jumlah }}
-    </div>
-
-    <div class="flex flex-col gap-2">
-      <label class="text-sm font-medium text-slate-600 dark:text-slate-300">
-        Catatan
-      </label>
-      {{ form.catatan }}
-    </div>
-
-  </div>
-
-  <!-- Button Group -->
-  <div class="flex items-center justify-end gap-3 pt-2">
-
-    <button
-      type="submit"
-      class="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-lg text-sm font-semibold hover:opacity-90 transition">
-
-      <span class="material-symbols-outlined text-base">add</span>
-      Tambah Item
-    </button>
-
-    <a href="{% url 'user:nota_selesai' nota.id %}"
-      class="inline-flex items-center px-5 py-2.5 bg-green-500 text-white rounded-lg text-sm font-semibold hover:bg-green-600 transition">
-
-      Selesai Input
-    </a>
-
-  </div>
-
-</form>
-```
-
-  </div>
-
-  <!-- ================= LIST ITEM ================= -->
-
-  <div class="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 space-y-5">
-
-```
-<div class="flex items-center justify-between">
-
-  <h3 class="text-md font-semibold text-slate-800 dark:text-white">
-    Daftar Item Laundry
-  </h3>
-
-  <div class="bg-slate-100 dark:bg-slate-800 px-4 py-1.5 rounded-lg text-sm font-semibold">
-    Total : {{ total_item }} Pakaian
-  </div>
-
-</div>
-
-<div class="overflow-x-auto rounded-lg border border-slate-200 dark:border-slate-800">
-
-  <table class="w-full text-sm">
-
-    <thead class="bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
-      <tr>
-        <th class="py-3 px-4 w-12 text-left">No</th>
-        <th class="py-3 px-4 text-left">Jenis</th>
-        <th class="py-3 px-4 w-24 text-left">Jumlah</th>
-        <th class="py-3 px-4 text-left">Catatan</th>
-      </tr>
-    </thead>
-
-    <tbody class="divide-y divide-slate-200 dark:divide-slate-800">
-
-      {% for item in nota.items.all %}
-      <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition">
-
-        <td class="py-3 px-4 text-slate-500">
-          {{ forloop.counter }}
-        </td>
-
-        <td class="py-3 px-4 font-medium text-slate-700 dark:text-slate-200">
-          {{ item.jenis }}
-        </td>
-
-        <td class="py-3 px-4">
-          <span class="bg-primary/10 text-primary px-3 py-1 rounded-md text-xs font-semibold">
-            {{ item.jumlah }}
-          </span>
-        </td>
-
-        <td class="py-3 px-4 text-slate-600 dark:text-slate-400">
-          {{ item.catatan|default:"-" }}
-        </td>
-
-      </tr>
-
-      {% empty %}
-
-      <tr>
-        <td colspan="4" class="text-center text-slate-400 py-10">
-          Belum ada item laundry
-        </td>
-      </tr>
-
+<div class="two-col">
+  <section class="card form-card sticky-card">
+    <div class="card-head"><div><h2>Tambah Pakaian</h2><p>Masukkan satu jenis per baris.</p></div></div>
+    <form method="post" class="form-stack">
+      {% csrf_token %}
+      {% for field in form %}
+      <div class="field">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% for error in field.errors %}<small class="field-error">{{ error }}</small>{% endfor %}
+      </div>
       {% endfor %}
+      <button class="btn btn-primary btn-block" type="submit">+ Tambah Item</button>
+    </form>
+  </section>
 
-    </tbody>
-
-  </table>
-
+  <section class="card">
+    <div class="card-head">
+      <div><h2>Daftar Pakaian</h2><p>Total {{ total_item }} item.</p></div>
+      <a class="btn btn-ghost btn-sm" href="{% url 'item:detail_item' nota.id %}">Mode lihat</a>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Jenis</th><th>Jumlah</th><th>Catatan</th><th></th></tr></thead>
+        <tbody>
+          {% for item in items %}
+          <tr>
+            <td><strong>{{ item.get_jenis_display }}</strong></td>
+            <td>{{ item.jumlah }}</td>
+            <td>{{ item.catatan|default:"-" }}</td>
+            <td class="text-right">
+              <form method="post" action="{% url 'user:hapus_item' nota.id item.id %}" data-confirm="Hapus item pakaian ini dari nota?" data-confirm-title="Hapus item?" data-confirm-ok="Ya, hapus" data-confirm-icon="warning">
+                {% csrf_token %}<button class="btn btn-danger-ghost btn-sm" type="submit">Hapus</button>
+              </form>
+            </td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="4"><div class="empty-state">Belum ada item pakaian.</div></td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="card-footer actions-row">
+      <a class="btn btn-secondary" href="{% url 'user:user_index' %}">Selesai Input</a>
+      <form method="post" action="{% url 'user:nota_selesai' nota.id %}" data-confirm="{% if nota.status == 'Sudah' %}Buka kembali nota ini?{% else %}Tandai nota ini sebagai selesai?{% endif %}" data-confirm-title="Ubah status nota" data-confirm-ok="Ya, ubah status">
+        {% csrf_token %}<input type="hidden" name="next" value="{% url 'user:user_index' %}">
+        <button class="btn btn-primary" type="submit">{% if nota.status == 'Sudah' %}Buka Kembali{% else %}Tandai Selesai{% endif %}</button>
+      </form>
+    </div>
+  </section>
 </div>
-
-
-  </div>
-
-</div>
-
 {% endblock %}

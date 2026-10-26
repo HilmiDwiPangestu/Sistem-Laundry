@@ -1,0 +1,94 @@
+{% extends 'layouts/base.html' %}
+{% load laundry_extras %}
+{% block title %}Beranda - Sani Laundry{% endblock %}
+{% block content %}
+<section class="hero-simple">
+  <div>
+    <p class="eyebrow">{{ today|date:"l, d F Y" }}</p>
+    <h1>Halo, {{ request.user.first_name|default:request.user.username }}</h1>
+    <p>Fokus ke pekerjaan yang belum selesai. Untuk pelanggan datang, langsung buat nota baru.</p>
+  </div>
+  <a class="btn btn-primary btn-lg hero-action" href="{% url 'user:transaksi_baru' %}">+ Buat Nota Baru</a>
+</section>
+
+<section class="quick-search card compact-card no-print">
+  <form method="get" action="{% url 'nota:data_nota' %}" class="search-row">
+    <div class="search-grow">
+      <label for="dashboard-q">Cari nota / pelanggan</label>
+      <input class="form-control" id="dashboard-q" name="q" placeholder="Ketik nama pelanggan...">
+    </div>
+    <button class="btn btn-secondary" type="submit">Cari</button>
+  </form>
+</section>
+
+<section class="stats-grid stats-grid-3">
+  <article class="stat-card stat-focus">
+    <span>Belum selesai</span>
+    <strong>{{ belum_selesai }}</strong>
+    <small>nota yang masih diproses</small>
+  </article>
+  <article class="stat-card">
+    <span>Nota hari ini</span>
+    <strong>{{ total_nota_hari_ini }}</strong>
+    <small>transaksi masuk hari ini</small>
+  </article>
+  <article class="stat-card">
+    <span>Selesai hari ini</span>
+    <strong>{{ selesai_hari_ini }}</strong>
+    <small>nota yang sudah diselesaikan</small>
+  </article>
+</section>
+
+<section class="section-head">
+  <div>
+    <h2>Pekerjaan Belum Selesai</h2>
+    <p>Daftar ini diprioritaskan agar karyawan tidak perlu mencari satu per satu.</p>
+  </div>
+  <a class="text-link" href="{% url 'nota:data_nota' %}?status=Belum">Lihat semua</a>
+</section>
+
+<section class="order-grid">
+  {% for n in pending_notas %}
+  <article class="order-card">
+    <div class="order-card-top">
+      <div>
+        <span class="order-number">Nota #{{ n.id }}</span>
+        <h3>{{ n.pelanggan.nama }}</h3>
+      </div>
+      <span class="badge badge-warning">{{ n.get_status_display }}</span>
+    </div>
+    <div class="order-meta">
+      <span>{{ n.tgl|date:"d M Y" }}</span>
+      <span>{{ n.get_jenis_display }}</span>
+      <span>{{ n.get_layanan_display }}</span>
+      <span>{{ n.berat|kg }}</span>
+    </div>
+    <div class="order-card-bottom">
+      <strong>{{ n.harga|rupiah }}</strong>
+      <a class="btn btn-secondary btn-sm" href="{% url 'user:nota_detail' n.id %}">Buka Nota</a>
+    </div>
+  </article>
+  {% empty %}
+  <div class="empty-card">
+    <strong>Semua pekerjaan sudah selesai.</strong>
+    <span>Nota baru akan muncul di sini.</span>
+  </div>
+  {% endfor %}
+</section>
+
+<section class="section-head section-head-spaced">
+  <div><h2>Nota Terbaru</h2><p>Riwayat transaksi terakhir.</p></div>
+  <a class="text-link" href="{% url 'nota:data_nota' %}">Semua nota</a>
+</section>
+<section class="recent-list card">
+  {% for n in recent_notas %}
+  <a class="recent-row" href="{% url 'user:nota_detail' n.id %}">
+    <div class="recent-id">#{{ n.id }}</div>
+    <div class="recent-main"><strong>{{ n.pelanggan.nama }}</strong><span>{{ n.tgl|date:"d M Y" }} · {{ n.get_jenis_display }}</span></div>
+    <span class="badge {% if n.status == 'Sudah' %}badge-success{% else %}badge-warning{% endif %}">{{ n.get_status_display }}</span>
+  </a>
+  {% empty %}
+  <div class="empty-state">Belum ada nota.</div>
+  {% endfor %}
+</section>
+{% endblock %}

@@ -1,20 +1,97 @@
+
+# ==========================================
+# DJANGO LAUNDRY PROJECT
+# ==========================================
+
 # Virtual Environment
 venv/
 env/
 .venv/
+ENV/
+virtualenv/
 
 # Python
 __pycache__/
-*.pyc
+*.py[cod]
+*.pyo
+*.pyd
+*$py.class
+.python-version
 
 # Django
 db.sqlite3
+db.sqlite3-journal
+*.sqlite3
+*.log
+local_settings.py
+
+# Uploaded Files
 media/
+uploads/
+
+# Collected Static Files
 staticfiles/
+static_root/
 
-# Environment
+# Environment & Sensitive Files
 .env
+.env.*
+!.env.example
+*.env
+secrets.json
+credentials.json
 
-# OS
+# Local Thermal Printer Bridge
+.printer_bridge_token
+.printer_bridge_token.*
+printer_bridge.log
+printer_bridge.pid
+
+# IDE / Editor
+.vscode/
+.idea/
+*.code-workspace
+*.swp
+*.swo
+
+# Operating System
 .DS_Store
 Thumbs.db
+desktop.ini
+
+# Testing & Coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.mypy_cache/
+.ruff_cache/
+
+# Build & Distribution
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Database Backup
+*.sql
+*.dump
+*.backup
+*.bak
+backups/
+
+# Temporary Files
+*.tmp
+*.temp
+*.cache
+tmp/
+temp/
+.cache/
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# Deployment
+gunicorn.pid
+celerybeat-schedule

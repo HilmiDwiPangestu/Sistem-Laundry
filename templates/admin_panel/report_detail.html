@@ -1,0 +1,10 @@
+{% extends 'admin_panel/base.html' %}
+{% load laundry_extras %}
+{% block title %}Detail Laporan{% endblock %}
+{% block page_heading %}Detail Laporan{% endblock %}
+{% block content %}
+<section class="admin-page-head"><div><a class="back-link" href="{% url 'adminpanel:reports' %}">← Kembali ke Laporan</a><span class="admin-kicker">Rekap harian</span><h1>{{ tgl }}</h1><p>Rincian transaksi dan pendapatan pada tanggal ini.</p></div><div class="admin-head-actions"><a class="btn btn-secondary" href="{% url 'adminpanel:report_daily_download' tgl %}">↓ CSV</a><a class="btn btn-primary" href="{% url 'adminpanel:report_daily_pdf_download' tgl %}">↓ PDF</a></div></section>
+<section class="admin-stat-grid admin-stat-grid-2"><article><span>Total nota</span><strong>{{ total_nota }}</strong><small>transaksi</small></article><article><span>Total pendapatan</span><strong class="admin-stat-money">{{ total_pendapatan|rupiah }}</strong><small>hari ini</small></article></section>
+<section class="admin-panel-card admin-table-card"><div class="table-wrap"><table class="admin-responsive-table"><thead><tr><th>Nota</th><th>Pelanggan</th><th>Jenis laundry / kecepatan</th><th>Berat</th><th>Total</th><th class="text-right">Aksi</th></tr></thead><tbody>{% for n in notas %}<tr><td data-label="Nota"><strong>{{ n.nomor_struk }}</strong></td><td data-label="Pelanggan">{{ n.pelanggan.nama }}</td><td data-label="Jenis / kecepatan">{{ n.get_jenis_display }} · {{ n.get_layanan_display }}</td><td data-label="Berat">{{ n.berat|kg }}</td><td data-label="Total"><strong>{{ n.harga|rupiah }}</strong></td><td data-label="Aksi" class="text-right"><a class="btn btn-ghost btn-sm" href="{% url 'adminpanel:nota_detail' n.id %}">Kelola</a></td></tr>{% empty %}<tr><td colspan="6"><div class="empty-state">Tidak ada transaksi.</div></td></tr>{% endfor %}</tbody></table></div></section>
+{% include 'components/pagination.html' with page_obj=page_obj %}
+{% endblock %}

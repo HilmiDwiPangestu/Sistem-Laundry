@@ -1,0 +1,73 @@
+{% load static %}
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tes 3 Struk - {{ laundry_settings.nama_usaha }}</title>
+  <link rel="icon" type="image/png" href="{% static 'img/sani-laundry-logo.png' %}">
+  <link rel="stylesheet" href="{% static 'css/receipt.css' %}?v=54">
+  <style>:root{--receipt-paper:{{ laundry_settings.lebar_kertas }}mm}@page{size:{{ laundry_settings.lebar_kertas }}mm auto;margin:0}</style>
+  <script src="{% static 'js/thermal-print.js' %}?v=54" defer></script>
+</head>
+<body class="receipt-page receipt-bundle-page" data-autoprint="{% if autoprint %}1{% else %}0{% endif %}">
+  <div class="receipt-toolbar no-print">
+    <a href="{% url control_center_url_name %}" class="receipt-back">← Control Center</a>
+    <div class="receipt-toolbar-copy-links"><a class="active" href="#">3 Struk Tes</a></div>
+    <div class="receipt-toolbar-actions">
+      <span>{{ laundry_settings.lebar_kertas }} mm</span>
+      <button type="button" data-print-browser>Cetak Langsung (Kasir · Driver Windows, 3 Struk Tes)</button>
+      <button type="button" class="receipt-toolbar-secondary" data-print-bluetooth>Bluetooth Android (BLE)</button>
+    </div>
+    <p class="receipt-print-status no-print" data-print-status role="status" aria-live="polite" hidden></p>
+  </div>
+
+  <div class="receipt-bundle">
+    <main class="thermal-receipt receipt-copy receipt-copy-customer">
+      <header class="thermal-brand">
+        {% if laundry_settings.tampilkan_logo %}<img src="{% static 'img/sani-laundry-logo.png' %}" alt="Logo {{ laundry_settings.nama_usaha }}">{% endif %}
+        <h1>{{ laundry_settings.nama_usaha }}</h1>
+        {% if laundry_settings.slogan %}<p class="brand-tagline">{{ laundry_settings.slogan }}</p>{% endif %}
+        {% if laundry_settings.alamat %}<p>{{ laundry_settings.alamat }}</p>{% endif %}
+        {% if laundry_settings.telepon %}<p>Telp/WA: {{ laundry_settings.telepon }}</p>{% endif %}
+      </header>
+      <div class="receipt-title"><strong>BUKTI TRANSAKSI</strong><span>SL-TEST-0001</span></div>
+      <section class="receipt-section">
+        <h2>Informasi Transaksi</h2>
+        <dl class="receipt-detail-list">
+          <div><dt>Tanggal</dt><dd>11/10/2026</dd></div><div><dt>Pelanggan</dt><dd>Pelanggan Contoh</dd></div><div><dt>Kasir</dt><dd>Test Printer</dd></div>
+        </dl>
+      </section>
+      <section class="receipt-section">
+        <h2>Informasi Layanan</h2>
+        <dl class="receipt-detail-list">
+          <div><dt>Jenis laundry</dt><dd>Cuci Setrika</dd></div><div><dt>Kecepatan</dt><dd>Reguler</dd></div><div><dt>Berat</dt><dd>1,8 kg</dd></div><div><dt>Tarif</dt><dd>Rp 7.000/kg</dd></div>
+          
+        </dl>
+      </section>
+      <section class="receipt-section receipt-payment"><h2>Ringkasan Pembayaran</h2><dl class="receipt-detail-list payment-list"><div><dt>Subtotal</dt><dd>Rp 12.600</dd></div></dl><div class="thermal-grand-total"><span>Total</span><strong>Rp 13.000</strong></div></section>
+      <footer class="thermal-footer">{% if laundry_settings.footer_struk %}<p class="footer-message">{{ laundry_settings.footer_struk|truncatechars:45 }}</p>{% endif %}<div class="footer-divider"></div><small>{{ laundry_settings.nama_usaha }} · SL-TEST-0001 · KONSUMEN</small></footer>
+      <div class="receipt-cut-line"><span>Potong di sini</span></div>
+    </main>
+
+    <main class="thermal-receipt receipt-copy receipt-copy-laundry">
+      <header class="thermal-brand thermal-brand-compact">{% if laundry_settings.tampilkan_logo %}<img src="{% static 'img/sani-laundry-logo.png' %}" alt="Logo {{ laundry_settings.nama_usaha }}">{% endif %}<h1>{{ laundry_settings.nama_usaha }}</h1>{% if laundry_settings.telepon %}<p>Telp/WA: {{ laundry_settings.telepon }}</p>{% endif %}</header>
+      <div class="receipt-title"><strong>ARSIP TRANSAKSI</strong><span>SL-TEST-0001</span></div>
+      <section class="receipt-section"><h2>Data Nota</h2><dl class="receipt-detail-list"><div><dt>Tanggal</dt><dd>11/10/2026</dd></div><div><dt>Pelanggan</dt><dd>Pelanggan Contoh</dd></div><div><dt>Kasir</dt><dd>Test Printer</dd></div><div><dt>Jenis laundry</dt><dd>Cuci Setrika</dd></div><div><dt>Kecepatan</dt><dd>Reguler</dd></div><div><dt>Berat</dt><dd>1,8 kg</dd></div><div><dt>Tarif</dt><dd>Rp 7.000/kg</dd></div><div><dt>Rincian item</dt><dd>2 jenis · 5 pakaian</dd></div></dl></section>
+      <section class="receipt-section receipt-payment"><h2>Nilai Transaksi</h2><dl class="receipt-detail-list payment-list"><div><dt>Subtotal</dt><dd>Rp 12.600</dd></div></dl><div class="thermal-grand-total"><span>Total</span><strong>Rp 13.000</strong></div></section>
+      <footer class="thermal-footer">{% if laundry_settings.footer_struk %}<p class="footer-message">{{ laundry_settings.footer_struk|truncatechars:45 }}</p>{% endif %}<div class="footer-divider"></div><small>{{ laundry_settings.nama_usaha }} · SL-TEST-0001 · LAUNDRY</small></footer>
+      <div class="receipt-cut-line"><span>Potong di sini</span></div>
+    </main>
+
+    <main class="thermal-receipt receipt-copy receipt-copy-items">
+      <header class="thermal-brand thermal-brand-compact">{% if laundry_settings.tampilkan_logo %}<img src="{% static 'img/sani-laundry-logo.png' %}" alt="Logo {{ laundry_settings.nama_usaha }}">{% endif %}<h1>{{ laundry_settings.nama_usaha }}</h1></header>
+      <div class="receipt-title"><strong>RINCIAN PAKAIAN</strong><span>SL-TEST-0001</span></div>
+      <section class="receipt-section"><h2>Identitas Cucian</h2><dl class="receipt-detail-list"><div><dt>Pelanggan</dt><dd>Pelanggan Contoh</dd></div><div><dt>Tanggal</dt><dd>11/10/2026</dd></div><div><dt>Jenis laundry</dt><dd>Cuci Setrika</dd></div><div><dt>Kecepatan</dt><dd>Reguler</dd></div><div><dt>Berat</dt><dd>1,8 kg</dd></div></dl></section>
+      <section class="receipt-section thermal-items"><div class="section-heading-row"><h2>Daftar Item</h2><span>2 jenis · 5 item</span></div><div class="receipt-item-table"><div class="receipt-item-row"><span class="receipt-item-bullet" aria-hidden="true">•</span><strong class="receipt-item-qty">3</strong><div class="receipt-item-name"><strong>Kaos Lengan Pendek</strong><small>Catatan: noda ringan</small></div></div><div class="receipt-item-row"><span class="receipt-item-bullet" aria-hidden="true">•</span><strong class="receipt-item-qty">2</strong><div class="receipt-item-name"><strong>Celana Panjang</strong></div></div></div></section>
+      <section class="receipt-section receipt-item-total"><div><span>Total jenis</span><strong>2</strong></div><div><span>Total pakaian</span><strong>5 item</strong></div></section>
+      <footer class="thermal-footer">{% if laundry_settings.footer_struk %}<p class="footer-message">{{ laundry_settings.footer_struk|truncatechars:45 }}</p>{% endif %}<div class="footer-divider"></div><small>{{ laundry_settings.nama_usaha }} · SL-TEST-0001 · ITEM</small></footer>
+    </main>
+  </div>
+
+</body>
+</html>

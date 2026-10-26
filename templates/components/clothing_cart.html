@@ -1,0 +1,73 @@
+<section class="card clothing-cart-card" data-clothing-cart>
+  <div class="clothing-cart-head">
+    <div>
+      <p class="eyebrow">Input banyak sekaligus</p>
+      <h2>Keranjang Pakaian</h2>
+      <p>Pilih semua jenis pakaian yang masuk, atur jumlahnya, lalu simpan sekali ke nota.</p>
+    </div>
+    <div class="clothing-cart-badges" aria-live="polite">
+      <span><strong data-cart-kind-count>0</strong> jenis</span>
+      <span><strong data-cart-total>0</strong> pcs</span>
+    </div>
+  </div>
+
+  <form method="post" class="clothing-cart-form" data-clothing-cart-form>
+    {% csrf_token %}
+    <input type="hidden" name="action" value="bulk_items">
+    <input type="hidden" name="items_payload" value="[]" data-cart-payload>
+
+    <div class="clothing-cart-layout">
+      <div class="clothing-cart-picker-column">
+        <div class="clothing-cart-subhead">
+          <div><h3>Sering dipakai</h3><p>Tekan pilihan untuk memasukkannya ke keranjang.</p></div>
+        </div>
+        <div class="clothing-quick-grid" aria-label="Jenis pakaian yang sering dipakai">
+          {% for value, label in quick_items %}
+          <button type="button" class="clothing-choice" data-cart-add data-value="{{ value }}" data-label="{{ label }}">
+            <span>{{ label }}</span>
+            <small data-cart-choice-count>＋ Tambah</small>
+          </button>
+          {% endfor %}
+        </div>
+
+        <details class="clothing-all-picker">
+          <summary>Cari atau pilih jenis pakaian lainnya</summary>
+          <div class="clothing-all-picker-body">
+            <label for="clothing-cart-search-{{ nota.id }}">Cari jenis pakaian</label>
+            <input id="clothing-cart-search-{{ nota.id }}" class="form-control" type="search" placeholder="Contoh: kemeja, seragam, hoodie..." autocomplete="off" data-cart-search>
+            <div class="clothing-search-results" data-cart-search-results>
+              {% for value, label in all_items %}
+              <button type="button" class="clothing-search-option" data-cart-add data-cart-search-option data-value="{{ value }}" data-label="{{ label }}">
+                <span>{{ label }}</span><small data-cart-choice-count>＋ Tambah</small>
+              </button>
+              {% endfor %}
+            </div>
+            <p class="clothing-search-empty is-hidden" data-cart-search-empty>Tidak ada jenis yang cocok.</p>
+            <button type="button" class="clothing-custom-add is-hidden" data-cart-custom-add>
+              <span>＋ Tambah jenis baru:</span> <strong data-cart-custom-label></strong>
+            </button>
+            <small class="clothing-custom-help">Jika nama pakaian tidak tersedia, ketik nama baru lalu tambahkan.</small>
+          </div>
+        </details>
+      </div>
+
+      <div class="clothing-cart-basket">
+        <div class="clothing-cart-basket-head">
+          <div><h3>Isi keranjang</h3><p>Jumlah setiap jenis bisa diubah sebelum disimpan.</p></div>
+          <button type="button" class="clothing-cart-clear" data-cart-clear disabled>Kosongkan</button>
+        </div>
+        <div class="clothing-cart-list" data-cart-list aria-live="polite">
+          <div class="clothing-cart-empty" data-cart-empty>
+            <span aria-hidden="true">＋</span>
+            <strong>Keranjang masih kosong</strong>
+            <small>Pilih satu atau beberapa jenis pakaian di sebelah kiri.</small>
+          </div>
+        </div>
+        <div class="clothing-cart-footer">
+          <div><span>Total sementara</span><strong><b data-cart-total>0</b> pakaian</strong></div>
+          <button type="submit" class="btn btn-primary clothing-cart-save" data-cart-submit disabled>Simpan semua ke nota</button>
+        </div>
+      </div>
+    </div>
+  </form>
+</section>

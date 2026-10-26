@@ -1,54 +1,51 @@
-from django.shortcuts import render, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
+from django.db.models import Q, Sum
+from django.shortcuts import get_object_or_404, redirect, render
+
 from app.nota.models import Nota
-from django.db.models import Sum, Count
+from app.user.decorators import admin_required
 
-# Create your views here.
 
+@login_required
 def data_item(request):
-    notas = Nota.objects.select_related('pelanggan').all().order_by('-id')
-    
-    return render(request, 'item/data_item.html', {'notas': notas})
+    query = request.GET.get("q", "").strip()
+    notas = Nota.objects.select_related("pelanggan").prefetch_related("items")
+    if query:
+        notas = notas.filter(Q(pelanggan__nama__icontains=query) | Q(items__jenis__icontains=query)).distinct()
+    paginator = Paginator(notas, 10)
+    page_obj = paginator.get_page(request.GET.get("page"))
+    return render(request, "item/data_item.html", {"notas": page_obj, "page_obj": page_obj, "query": query})
 
+
+@login_required
 def detailItem(request, nota_id):
-    nota = get_object_or_404(Nota, id=nota_id)
-    items = nota.items.all()
-
-    return render(request, 'item/detail_item.html', {
-        'nota': nota,
-        'items': items
-    })
-
-def laporan_bulanan(request):
-    bulan = request.GET.get('bulan')
-    tahun = request.GET.get('tahun')
-
-    notas = Nota.objects.all()
-
-    if bulan and tahun:
-        notas = notas.filter(tgl__month=bulan, tgl__year=tahun)
-
-    # GROUP BY TANGGAL
-    laporan = (
-        notas.values('tgl')
-        .annotate(
-            total_nota=Count('id'),
-            total_pendapatan=Sum('harga')
-        )
-        .order_by('-tgl')
+    nota = get_object_or_404(Nota.objects.select_related("pelanggan"), id=nota_id)
+    items_qs = nota.items.all()
+    total_item = items_qs.aggregate(total=Sum("jumlah"))["total"] or 0
+    total_jenis = items_qs.count()
+    paginator = Paginator(items_qs, 10)
+    page_obj = paginator.get_page(request.GET.get("page"))
+    return render(
+        request,
+        "item/detail_item.html",
+        {"nota": nota, "items": page_obj, "page_obj": page_obj, "total_item": total_item, "total_jenis": total_jenis},
     )
 
-    context = {
-        'laporan': laporan,
-        'bulan': bulan,
-        'tahun': tahun,
-    }
 
-    return render(request, 'item/laporan.html', context)
+# Laporan dan keuangan hanya untuk Admin Center. URL lama dipertahankan
+# sebagai redirect aman agar bookmark versi sebelumnya tidak membuka laporan
+# di panel karyawan.
+@admin_required
+def laporan_bulanan(request):
+    periode = request.GET.get("periode", "").strip()
+    target = "adminpanel:reports"
+    if periode:
+        from django.urls import reverse
+        return redirect(f"{reverse(target)}?periode={periode}")
+    return redirect(target)
 
+
+@admin_required
 def laporan_detail_tanggal(request, tgl):
-    notas = Nota.objects.filter(tgl=tgl).order_by('-id')
-
-    return render(request, 'item/detail_laporan.html', {
-        'notas': notas,
-        'tgl': tgl
-    })
+    return redirect("adminpanel:report_detail", tgl=tgl)

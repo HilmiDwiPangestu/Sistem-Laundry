@@ -1,0 +1,52 @@
+{% extends 'admin_panel/base.html' %}
+{% load laundry_extras %}
+{% block title %}Dashboard Admin{% endblock %}
+{% block page_heading %}Dashboard Admin{% endblock %}
+{% block content %}
+<section class="admin-page-head">
+  <div><span class="admin-kicker">{{ today|date:"l, d F Y" }}</span><h1>Semua kontrol ada di Admin Center.</h1><p>Landing page, karyawan, operasional nota, pelanggan, laporan keuangan, harga, dan struk dikelola dari area admin tanpa berpindah ke panel karyawan.</p></div>
+  <div class="admin-head-actions"><a class="btn btn-secondary" href="{% url 'landing' %}" target="_blank" rel="noopener">Lihat Website</a><a class="btn btn-primary" href="{% url 'adminpanel:operations' %}">Layanan Operasional</a></div>
+</section>
+
+<section class="admin-stat-grid">
+  <article><span>Nota hari ini</span><strong>{{ nota_hari_ini }}</strong><small>{{ pendapatan_hari_ini|rupiah }} pendapatan</small></article>
+  <article><span>Belum selesai</span><strong>{{ belum_selesai }}</strong><small>nota masih diproses</small></article>
+  <article><span>Karyawan aktif</span><strong>{{ karyawan_aktif }}</strong><small>dari {{ total_karyawan }} akun karyawan</small></article>
+  <article><span>Pelanggan</span><strong>{{ total_pelanggan }}</strong><small>tersimpan di sistem</small></article>
+</section>
+
+<section class="admin-grid-2">
+  <article class="admin-panel-card">
+    <div class="admin-panel-head"><div><span>Kontrol cepat</span><h2>Bagian Sistem</h2></div></div>
+    <div class="admin-control-grid">
+      <a href="{% url 'adminpanel:operations' %}"><span>01</span><div><strong>Layanan Operasional</strong><small>Kelola nota dan pelanggan langsung dari Admin Center.</small></div></a>
+      <a href="{% url 'adminpanel:reports' %}"><span>02</span><div><strong>Laporan & Keuangan</strong><small>Rekap transaksi, pendapatan, dan download laporan CSV.</small></div></a>
+      <a href="{% url 'adminpanel:landing' %}"><span>03</span><div><strong>Landing Page</strong><small>Ubah judul, informasi, layanan, dan CTA website secara dinamis.</small></div></a>
+      <a href="{% url 'adminpanel:employees' %}"><span>04</span><div><strong>Karyawan</strong><small>Buat, edit, reset password, dan nonaktifkan akun.</small></div></a>
+      <a href="{% url 'adminpanel:settings' %}"><span>05</span><div><strong>Harga & Struk</strong><small>Atur harga layanan dan identitas laundry.</small></div></a>
+      <a href="{% url 'adminpanel:control_center' %}"><span>06</span><div><strong>Control Center & Printer</strong><small>Atur lebar kertas, preview struk, dan Printer Bridge Windows.</small></div></a>
+      <a href="{% url 'adminpanel:note_monitor' %}"><span>07</span><div><strong>Monitor Nota Real-time</strong><small>Pantau nota masuk per tanggal dengan pembaruan otomatis.</small></div></a>
+      <a href="{% url 'landing' %}" target="_blank" rel="noopener"><span>07</span><div><strong>Website Publik</strong><small>Preview landing page yang dilihat pelanggan.</small></div></a>
+    </div>
+  </article>
+
+  <article class="admin-panel-card">
+    <div class="admin-panel-head"><div><span>Status website</span><h2>Landing Page</h2></div><span class="badge {% if landing_content.aktif %}badge-success{% else %}badge-warning{% endif %}">{% if landing_content.aktif %}Aktif{% else %}Nonaktif{% endif %}</span></div>
+    <div class="admin-landing-preview">
+      <span>{{ landing_content.hero_badge }}</span>
+      <h3>{{ landing_content.hero_title }}</h3>
+      <p>{{ landing_content.hero_text|truncatechars:170 }}</p>
+      <small>Terakhir diperbarui {{ landing_content.updated_at|date:"d M Y H:i" }}</small>
+    </div>
+  </article>
+</section>
+
+<section class="admin-panel-card">
+  <div class="admin-panel-head"><div><span>Operasional</span><h2>Nota terbaru</h2></div><a href="{% url 'adminpanel:notas' %}">Lihat semua</a></div>
+  <div class="admin-recent-table">
+    {% for n in recent_notas %}
+    <a href="{% url 'adminpanel:nota_detail' n.id %}" class="admin-recent-row"><strong>{{ n.nomor_struk }}</strong><span>{{ n.pelanggan.nama }}</span><span>{{ n.get_jenis_display }}</span><b>{{ n.harga|rupiah }}</b><small>{{ n.get_status_display }}</small></a>
+    {% empty %}<div class="empty-state">Belum ada transaksi.</div>{% endfor %}
+  </div>
+</section>
+{% endblock %}

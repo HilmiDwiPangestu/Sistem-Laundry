@@ -1,122 +1,60 @@
 {% extends 'layouts/base.html' %}
-
+{% load laundry_extras %}
+{% block title %}Nota - Sani Laundry{% endblock %}
 {% block content %}
-  <div class="max-w-7xl mx-auto px-4">
-    <!-- HEADER -->
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-8">
+<section class="page-head split-head">
+  <div><p class="eyebrow">Transaksi laundry</p><h1>Daftar Nota</h1><p>Cari transaksi, buka detail, atau ubah status pekerjaan.</p></div>
+  <a class="btn btn-primary" href="{% url 'user:transaksi_baru' %}">+ Nota Baru</a>
+</section>
+
+<section class="mini-stats">
+  <div><span>Hari ini</span><strong>{{ total_nota_hari_ini }} nota</strong></div>
+  <div><span>Belum selesai</span><strong>{{ belum_selesai }}</strong></div>
+  <div><span>Selesai hari ini</span><strong>{{ selesai_hari_ini }} nota</strong></div>
+</section>
+
+<section class="card compact-card">
+  <form method="get" class="filter-grid">
+    <div class="field no-gap"><label for="q">Pelanggan</label><input class="form-control" id="q" name="q" value="{{ query }}" placeholder="Nama pelanggan"></div>
+    <div class="field no-gap"><label for="status">Status</label><select class="form-select" id="status" name="status"><option value="">Semua</option><option value="Belum" {% if status_filter == 'Belum' %}selected{% endif %}>Belum selesai</option><option value="Sudah" {% if status_filter == 'Sudah' %}selected{% endif %}>Selesai</option></select></div>
+    <div class="field no-gap"><label for="tgl">Tanggal</label><input class="form-control" type="date" id="tgl" name="tgl" value="{{ tanggal_filter }}"></div>
+    <div class="filter-actions"><button class="btn btn-secondary" type="submit">Terapkan</button><a class="btn btn-ghost" href="{% url 'nota:data_nota' %}">Reset</a></div>
+  </form>
+</section>
+
+<section class="nota-list">
+  {% for n in notas %}
+  <article class="nota-card">
+    <div class="nota-card-head">
       <div>
-        <h1 class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-slate-100">Nota Sani Laundry</h1>
-        <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Manajemen data nota pelanggan</p>
+        <span class="order-number">{{ n.nomor_struk }}</span>
+        <h3>{{ n.pelanggan.nama }}</h3>
+        <small>{{ n.tgl|date:"d M Y" }}</small>
       </div>
-
-      <div class="flex gap-3">
-        <button class="px-4 h-10 rounded-lg bg-primary text-white text-sm font-semibold flex items-center gap-2 shadow hover:bg-primary/90 transition">
-          <span class="material-symbols-outlined text-[18px]">print</span>
-          Print
-        </button>
-      </div>
+      <span class="badge {% if n.status == 'Sudah' %}badge-success{% else %}badge-warning{% endif %}">{{ n.get_status_display }}</span>
     </div>
-
-    <!-- GRID -->
-    <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
-      <!-- TABLE AREA -->
-      <div class="xl:col-span-2">
-        <section class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
-          <!-- CARD HEADER -->
-          <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-800">
-            <div class="flex items-center gap-2 text-primary">
-              <span class="material-symbols-outlined">receipt_long</span>
-              <h2 class="font-semibold text-slate-900 dark:text-slate-100">Data Nota</h2>
-            </div>
-
-            {% comment %} <button class="flex items-center gap-1 text-sm font-semibold text-primary hover:underline">
-              <span class="material-symbols-outlined text-[18px]">add</span>
-              Tambah Nota
-            </button> {% endcomment %}
-          </div>
-
-          <!-- TABLE -->
-          <div class="overflow-x-auto">
-            <table class="w-full text-sm">
-              <thead class="bg-slate-50 dark:bg-slate-800/40 text-slate-500 dark:text-slate-400">
-                <tr>
-                  <th class="px-6 py-3 text-left font-semibold">Pelanggan</th>
-                  <th class="px-6 py-3 text-center font-semibold">Jenis</th>
-                  <th class="px-6 py-3 text-center font-semibold">Kg</th>
-                  <th class="px-6 py-3 text-right font-semibold">Harga</th>
-                  <th class="px-6 py-3 text-right font-semibold">Tanggal</th>
-                  <th class="px-6 py-3 text-right font-semibold">Aksi</th>
-                </tr>
-              </thead>
-
-              <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
-                {% for nota in notas %}
-                  <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition">
-                    <td class="px-6 py-4 font-medium text-slate-900 dark:text-slate-100">{{ nota.pelanggan.nama }}</td>
-
-                    <td class="px-6 py-4 text-center text-slate-500">{{ nota.get_jenis_display }}</td>
-
-                    <td class="px-6 py-4 text-center">{{ nota.berat }}</td>
-
-                    <td class="px-6 py-4 text-right font-semibold text-slate-800 dark:text-slate-200">Rp {{ nota.harga|floatformat:0 }}</td>
-
-                    <td class="px-6 py-4 text-right text-slate-500">{{ nota.tgl|date:"d F Y"  }}</td>
-                    {% comment %} <td class="px-6 py-4 text-right text-slate-500">{{ nota.tgl }}</td> {% endcomment %}
-
-                    <td class="px-6 py-4">
-                      <div class="flex justify-end gap-3 text-sm">
-                        <a href="{% url 'nota:nota_edit' nota.id %}" class="px-3 py-1.5 rounded-md text-xs font-semibold bg-blue-50 text-blue-600 hover:bg-blue-100 transition">Edit</a>
-
-                        <a href="{% url 'nota:nota_delete' nota.id %}" class="px-3 py-1.5 rounded-md text-xs font-semibold bg-red-50 text-red-600 hover:bg-red-100 transition" onclick="return confirm('Yakin ingin menghapus data ini?')">Hapus</a>
-                      </div>
-                    </td>
-                  </tr>
-                {% empty %}
-                  <tr>
-                    <td colspan="6" class="py-12 text-center text-slate-400">Belum ada data nota</td>
-                  </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-          </div>
-        </section>
-      </div>
-
-      <!-- SIDEBAR -->
-      <div class="space-y-6">
-        <!-- STAT CARD -->
-        <section class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
-          <h2 class="text-lg font-semibold mb-6 text-slate-900 dark:text-slate-100">Statistik Hari Ini</h2>
-
-          <div class="space-y-4 text-sm">
-            <div class="flex justify-between">
-              <span class="text-slate-500">Total Nota</span>
-              <span class="font-semibold text-slate-900 dark:text-slate-100">{{ total_nota }}</span>
-            </div>
-
-            <div class="flex justify-between">
-              <span class="text-slate-500">Pendapatan Hari Ini</span>
-              <span class="font-semibold text-emerald-500">Rp {{ pendapatan_hari_ini|floatformat:0 }}</span>
-            </div>
-
-            <div class="border-t pt-4 flex justify-between">
-              <span class="font-semibold text-slate-900 dark:text-slate-100">Total Pendapatan</span>
-
-              <span class="text-lg font-bold text-primary">Rp {{ total_pendapatan|floatformat:0 }}</span>
-            </div>
-          </div>
-        </section>
-
-        <!-- INFO -->
-        <div class="bg-primary/5 dark:bg-primary/10 p-6 rounded-xl border border-primary/20">
-          <div class="flex items-center gap-2 mb-2 text-primary">
-            <span class="material-symbols-outlined">info</span>
-            <h3 class="font-semibold">Service Note</h3>
-          </div>
-
-          <p class="text-sm text-slate-600 dark:text-slate-400">Standard processing time adalah 48 jam. Layanan express 24 jam dikenakan tambahan biaya 20%.</p>
-        </div>
-      </div>
+    <div class="nota-card-detail">
+      <div><span>Layanan</span><strong>{{ n.get_jenis_display }}</strong></div>
+      <div><span>Kecepatan</span><strong>{{ n.get_layanan_display }}</strong></div>
+      <div><span>Berat</span><strong>{{ n.berat|kg }}</strong></div>
+      <div><span>Total</span><strong>{{ n.harga|rupiah }}</strong></div>
     </div>
-  </div>
+    <div class="nota-card-actions">
+      <a class="btn btn-secondary" href="{% url 'user:nota_detail' n.id %}">Buka Nota</a>
+      <a class="btn btn-ghost" target="_blank" rel="noopener" href="{% url 'user:nota_receipt' n.id %}?autoprint=1">Cetak Struk</a>
+      <form method="post" action="{% url 'user:nota_selesai' n.id %}" data-confirm="{% if n.status == 'Sudah' %}Buka kembali nota {{ n.nomor_struk }}?{% else %}Tandai nota {{ n.nomor_struk }} sebagai selesai?{% endif %}" data-confirm-title="Ubah status nota" data-confirm-ok="Ya, ubah status">
+        {% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}">
+        <button class="btn btn-ghost" type="submit">{% if n.status == 'Sudah' %}Buka Kembali{% else %}Tandai Selesai{% endif %}</button>
+      </form>
+      <form method="post" action="{% url 'user:hapus_nota' n.id %}" data-confirm="Hapus nota {{ n.nomor_struk }} atas nama {{ n.pelanggan.nama }}? Data nota dan seluruh rincian pakaiannya akan dihapus permanen." data-confirm-title="Hapus nota?" data-confirm-ok="Ya, hapus" data-confirm-icon="warning">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+        <button class="btn btn-danger-ghost" type="submit" aria-label="Hapus nota {{ n.nomor_struk }}">Hapus</button>
+      </form>
+    </div>
+  </article>
+  {% empty %}<div class="empty-card"><strong>Tidak ada nota.</strong><span>Coba ubah filter atau buat nota baru.</span></div>{% endfor %}
+</section>
+
+{% include "components/pagination.html" with page_obj=page_obj %}
 {% endblock %}

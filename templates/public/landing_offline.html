@@ -1,0 +1,21 @@
+{% load static %}
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#4f46e5"><title>{{ laundry.nama_usaha|default:"Sani Laundry" }}</title>
+  <link rel="icon" href="{% static 'img/sani-laundry-logo.png' %}"><link rel="stylesheet" href="{% static 'css/app.css' %}?v=58">
+  <link rel="stylesheet" href="{% static 'css/landing-v58.css' %}?v=58">
+</head>
+<body class="public-site public-site-v58">
+  <main class="public-offline-page">
+    <div class="public-offline-card">
+      <img src="{% static 'img/sani-laundry-logo.png' %}" alt="Logo {{ laundry.nama_usaha|default:'Sani Laundry' }}">
+      <span>Website sedang diperbarui</span>
+      <h1>{{ laundry.nama_usaha|default:"Sani Laundry" }}</h1>
+      <p>Halaman publik sedang dinonaktifkan sementara oleh admin. Sistem internal tetap dapat digunakan.</p>
+      <a class="public-btn public-btn-primary" href="{% url 'login' %}">Masuk Sistem Internal</a>
+    </div>
+  </main>
+</body>
+</html>

@@ -1,27 +1,32 @@
-"""
-URL configuration for config project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/6.0/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
 from django.contrib import admin
-from django.urls import path, include
+from django.contrib.auth import views as auth_views
+from django.urls import include, path
+
+from app.user import views as user_views
+from .pwa import service_worker
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('admin-laundry/', include('app.nota.urls')),
-    path('nota/', include('app.nota.urls')),
-    path('item/', include('app.item.urls')),
-    path('', include('app.user.urls')),
-    path("select2/", include("django_select2.urls")),
+    path("service-worker.js", service_worker, name="service_worker"),
+    path("", user_views.landing_page, name="landing"),
+    path(
+        "login/",
+        auth_views.LoginView.as_view(
+            template_name="auth/login.html",
+            redirect_authenticated_user=True,
+        ),
+        name="login",
+    ),
+    path("login/redirect/", user_views.role_redirect, name="role_redirect"),
+    path("logout/", auth_views.LogoutView.as_view(), name="logout"),
+
+    # Admin Center adalah panel utama admin. Django admin tetap tersedia sebagai
+    # alat teknis cadangan di /system-admin/.
+    path("admin-panel/", include("app.user.admin_urls")),
+    path("system-admin/", admin.site.urls),
+
+    # Seluruh area operasional karyawan dikelompokkan di /karyawan/ agar
+    # terpisah jelas dari landing page publik dan Admin Center.
+    path("karyawan/nota/", include("app.nota.urls")),
+    path("karyawan/item/", include("app.item.urls")),
+    path("karyawan/", include("app.user.urls")),
 ]

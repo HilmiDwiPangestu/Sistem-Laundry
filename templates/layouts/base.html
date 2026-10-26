@@ -1,169 +1,129 @@
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Admin Panel - Sani Laundry</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
-    <script id="tailwind-config">
-      tailwind.config = {
-        darkMode: 'class',
-        theme: {
-          extend: {
-            colors: {
-              primary: '#135bec',
-              'background-light': '#f6f6f8',
-              'background-dark': '#101622'
-            },
-            fontFamily: {
-              display: ['Inter']
-            },
-            borderRadius: {
-              DEFAULT: '0.25rem',
-              lg: '0.5rem',
-              xl: '0.75rem',
-              full: '9999px'
-            }
-          }
-        }
-      }
-    </script>
-  </head>
+{% load static %}
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#4f46e5">
+  <meta name="color-scheme" content="light">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Sani Laundry">
+  <title>{% block title %}Sani Laundry{% endblock %}</title>
+  <link rel="icon" type="image/png" href="{% static 'img/sani-laundry-logo.png' %}">
+  <link rel="apple-touch-icon" href="{% static 'pwa/apple-touch-icon.png' %}">
+  <link rel="manifest" href="{% static 'pwa/manifest.webmanifest' %}">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.26.25/dist/sweetalert2.min.css">
+  <link rel="stylesheet" href="{% static 'css/app.css' %}?v=57">
+  <link rel="stylesheet" href="{% static 'css/redesign-v57.css' %}?v=57">
+</head>
+<body class="app-body {% block body_class %}{% endblock %}">
+  <a class="skip-link" href="#main-content">Lewati ke konten</a>
 
-  <body class="font-display bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100">
-    <div class="flex h-screen overflow-hidden">
-      <!-- Sidebar Navigation -->
-      <aside id="sidebar" class="fixed md:static z-40 w-64 h-full flex-shrink-0 border-r border-primary/10 bg-white dark:bg-slate-900 overflow-y-auto transform -translate-x-full md:translate-x-0 transition-transform duration-300">
-       
-        <div class="flex flex-col h-full p-6">
-          <div class="flex items-center gap-3 mb-8">
-            <div class="bg-primary size-10 rounded-lg flex items-center justify-center text-white">
-              <span class="material-symbols-outlined">local_laundry_service</span>
-            </div>
-            <div>
-              <h1 class="text-slate-900 dark:text-white text-lg font-bold leading-none">Sani Laundry</h1>
-              <p class="text-slate-500 dark:text-slate-400 text-xs mt-1">Laundry Professional</p>
-            </div>
-          </div>
-          <nav class="flex-1 space-y-1">
-            <a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/10 text-primary font-semibold" href="{% url 'nota:dashboard' %}">
-              <span class="material-symbols-outlined">dashboard</span>
-              <span>Dashboard</span>
-            </a>
-            <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors" href="{% url 'item:data_item' %}">
-              <span class="material-symbols-outlined">monitoring</span>
-              <span>Data Item</span>
-            </a>
+  <div class="app-shell">
+    <aside class="sidebar no-print" id="app-sidebar" aria-label="Navigasi utama">
+      <div class="sidebar-brand-wrap">
+        <a class="sidebar-brand" href="{% url 'user:user_index' %}" aria-label="Sani Laundry - Beranda">
+          <span class="brand-logo-wrap"><img src="{% static 'img/sani-laundry-logo.png' %}" alt="Logo Sani Laundry" width="54" height="54"></span>
+          <span class="brand-copy"><strong>Sani Laundry</strong><small>{% if request.user.is_staff %}Mode Operasional Admin{% else %}Panel Karyawan{% endif %}</small></span>
+        </a>
+        <button class="icon-btn sidebar-close" type="button" data-sidebar-close aria-label="Tutup menu">×</button>
+      </div>
 
-            {% comment %} <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors" href="#">
-              <span class="material-symbols-outlined">shopping_cart</span>
-              <span>Keuangan</span>
-            </a> {% endcomment %}
+      <div class="sidebar-primary-action">
+        <a class="btn btn-primary btn-block btn-new-order" href="{% url 'user:transaksi_baru' %}">
+          <span class="btn-plus" aria-hidden="true">＋</span><span>Buat Nota Baru</span>
+        </a>
+      </div>
 
-            <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors" href="{% url 'nota:data_nota' %}">
-              <span class="material-symbols-outlined">group</span>
-              <span>Data Nota</span>
-            </a>
-            <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors" href="{% url 'item:laporan_bulanan' %}">
-              <span class="material-symbols-outlined">local_shipping</span>
-              <span>Laporan Laundry</span>
-            </a>
-            <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors" href="#">
-              <span class="material-symbols-outlined">settings</span>
-              <span>Settings</span>
-            </a>
-          </nav>
-          
-          {% comment %} <div class="mt-auto pt-6 space-y-3">
-            <button class="w-full flex items-center justify-center gap-2 bg-primary text-white py-2.5 rounded-lg font-bold hover:bg-primary/90 transition-colors">
-              <span class="material-symbols-outlined text-[20px]">add_circle</span>
-              <span>New Order</span>
-            </button>
+      <nav class="sidebar-nav">
+        <p class="nav-label">Menu utama</p>
+        <a class="side-link {% if request.resolver_match.url_name == 'user_index' %}active{% endif %}" href="{% url 'user:user_index' %}">
+          <span class="side-icon" aria-hidden="true">⌂</span><span>Beranda</span>
+        </a>
+        <a class="side-link {% if request.resolver_match.namespace == 'nota' or request.resolver_match.url_name == 'nota_detail' %}active{% endif %}" href="{% url 'nota:data_nota' %}">
+          <span class="side-icon" aria-hidden="true">▤</span><span>Daftar Nota</span>
+        </a>
+        <a class="side-link {% if 'pelanggan' in request.path %}active{% endif %}" href="{% url 'user:pelanggan_list' %}">
+          <span class="side-icon" aria-hidden="true">◎</span><span>Pelanggan</span>
+        </a>
+        {% if request.user.is_staff %}
+        <a class="side-link side-link-admin" href="{% url 'adminpanel:dashboard' %}">
+          <span class="side-icon" aria-hidden="true">◆</span><span>Admin Center</span>
+        </a>
+        {% endif %}
+        <a class="side-link" href="{% url 'landing' %}" target="_blank" rel="noopener">
+          <span class="side-icon" aria-hidden="true">↗</span><span>Website</span>
+        </a>
+      </nav>
 
-            <button class="w-full flex items-center justify-center gap-2 border border-primary/20 bg-primary/5 text-primary py-2.5 rounded-lg font-bold hover:bg-primary/10 transition-colors">
-              <span class="material-symbols-outlined text-[20px]">person_add</span>
-              <span>Register Customer</span>
-            </button>
-
-          </div> {% endcomment %}
+      <div class="sidebar-utility">
+        <button class="sidebar-install" type="button" data-install-app hidden>
+          <span class="sidebar-help-icon" aria-hidden="true">↓</span>
+          <span><strong>Pasang Aplikasi</strong><small>Tambahkan Sani Laundry ke perangkat ini.</small></span>
+        </button>
+        <div class="sidebar-help">
+          <span class="sidebar-help-icon" aria-hidden="true">i</span>
+          <div><strong>Mode internal</strong><small>Dirancang ringan untuk operasional harian karyawan.</small></div>
         </div>
-      </aside>
+      </div>
 
-       <div id="sidebarOverlay" class="fixed inset-0 bg-black/40 z-30 hidden md:hidden"></div>
-      
-      <!-- Main Content Area -->
-      <main class="flex-1 overflow-y-auto">
+      <div class="sidebar-account">
+        <div class="user-avatar">{{ request.user.get_full_name|default:request.user.username|slice:":1"|upper }}</div>
+        <div class="sidebar-user-copy">
+          <strong>{{ request.user.get_full_name|default:request.user.username }}</strong>
+          <span><i class="online-dot"></i> Sedang aktif</span>
+        </div>
+        <form method="post" action="{% url 'logout' %}" data-confirm="Keluar dari aplikasi Sani Laundry?" data-confirm-title="Keluar dari akun" data-confirm-ok="Ya, keluar">
+          {% csrf_token %}
+          <button class="icon-btn" type="submit" title="Keluar" aria-label="Keluar dari akun">↗</button>
+        </form>
+      </div>
+    </aside>
 
-        <header class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-4 md:px-6 py-3">
+    <div class="sidebar-overlay no-print" data-sidebar-overlay></div>
 
-            <div class="flex items-center justify-between">
+    <div class="app-main">
+      <header class="mobile-topbar no-print">
+        <button class="icon-btn menu-toggle" type="button" data-sidebar-open aria-label="Buka menu" aria-controls="app-sidebar" aria-expanded="false">☰</button>
+        <a class="mobile-brand" href="{% url 'user:user_index' %}">
+          <img src="{% static 'img/sani-laundry-logo.png' %}" alt="" width="38" height="38">
+          <div><strong>Sani Laundry</strong><span>{% if request.user.is_staff %}Mode Operasional Admin{% else %}Panel Karyawan{% endif %}</span></div>
+        </a>
+        <a class="mobile-new" href="{% url 'user:transaksi_baru' %}" aria-label="Buat nota baru">＋</a>
+      </header>
 
-                <!-- LEFT -->
-                <div class="flex items-center gap-3">
-
-                  <!-- Hamburger -->
-                  <button id="hamburgerBtn"
-                  class="md:hidden p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition">
-                      <span class="material-symbols-outlined">menu</span>
-                  </button>
-
-                  <!-- Title -->
-                  <h1 class="text-lg md:text-xl font-semibold text-slate-800 dark:text-slate-100">Dashboard</h1>
-
+      <main class="content-wrap" id="main-content">
+        <div class="content-container">
+          {% if messages %}
+            <div class="messages no-print" aria-live="polite">
+              {% for message in messages %}
+                <div class="alert alert-{{ message.tags|default:'info' }}" data-alert>
+                  <span>{{ message }}</span>
+                  <button type="button" class="alert-close" data-alert-close aria-label="Tutup notifikasi">×</button>
                 </div>
-
-                <!-- RIGHT -->
-                <div class="flex items-center gap-2 md:gap-4">
-
-                  <!-- Search -->
-                  <div class="hidden md:block">
-                      <input type="text" placeholder="Search..." class="w-48 lg:w-64 px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                  </div>
-
-                  <!-- Notification -->
-                  <button class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition">
-                      <span class="material-symbols-outlined text-slate-600 dark:text-slate-300">notifications</span>
-                  </button>
-
-                  <!-- Profile -->
-                  <div class="flex items-center gap-2 cursor-pointer">
-                      <img src="https://i.pravatar.cc/40" class="w-8 h-8 rounded-full">
-                      <span class="hidden md:block text-sm font-medium text-slate-700 dark:text-slate-200">Admin</span>
-                  </div>
-
-                </div>
-
+              {% endfor %}
             </div>
+          {% endif %}
 
-        </header>
-
-        {% comment %} CONTENT {% endcomment %}
-        <div class="p-8 max-w-7xl mx-auto space-y-6">
-
-            {% block content %}
-    
-            {% endblock %}
-          
+          {% block content %}{% endblock %}
+        </div>
       </main>
+
+      <nav class="mobile-bottom-nav no-print" aria-label="Navigasi cepat">
+        <a class="mobile-nav-item {% if request.resolver_match.url_name == 'user_index' %}active{% endif %}" href="{% url 'user:user_index' %}"><span aria-hidden="true">⌂</span><small>Beranda</small></a>
+        <a class="mobile-nav-item {% if request.resolver_match.namespace == 'nota' or request.resolver_match.url_name == 'nota_detail' %}active{% endif %}" href="{% url 'nota:data_nota' %}"><span aria-hidden="true">▤</span><small>Nota</small></a>
+        <a class="mobile-nav-create" href="{% url 'user:transaksi_baru' %}" aria-label="Buat nota baru"><span>＋</span></a>
+        <a class="mobile-nav-item {% if 'pelanggan' in request.path %}active{% endif %}" href="{% url 'user:pelanggan_list' %}"><span aria-hidden="true">◎</span><small>Pelanggan</small></a>
+        <a class="mobile-nav-item" href="{% url 'landing' %}" target="_blank" rel="noopener"><span aria-hidden="true">↗</span><small>Website</small></a>
+      </nav>
     </div>
+  </div>
 
-    <script>
-        const sidebar = document.getElementById("sidebar");
-        const hamburger = document.getElementById("hamburgerBtn");
-        const overlay = document.getElementById("sidebarOverlay");
-
-        hamburger.addEventListener("click", () => {
-            sidebar.classList.toggle("-translate-x-full");
-            overlay.classList.toggle("hidden");
-        });
-
-        overlay.addEventListener("click", () => {
-            sidebar.classList.add("-translate-x-full");
-            overlay.classList.add("hidden");
-        });
-    </script>
-
-  </body>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.26.25/dist/sweetalert2.min.js" defer></script>
+  <script src="{% static 'js/alerts.js' %}?v=57" defer></script>
+  <script src="{% static 'js/app.js' %}?v=57" defer></script>
+  {% block extra_scripts %}{% endblock %}
+</body>
 </html>

@@ -1,0 +1,35 @@
+{% if page_obj and page_obj.paginator.count > 0 %}
+<nav class="pagination pagination-modern standalone-pagination" aria-label="Navigasi halaman">
+  <div class="pagination-info">
+    <div>
+      <strong>{{ page_obj.start_index }}–{{ page_obj.end_index }}</strong>
+      <span>dari {{ page_obj.paginator.count }} data</span>
+    </div>
+    <small>Maks. 10 data / halaman</small>
+  </div>
+
+  <div class="pagination-controls">
+    {% if page_obj.has_previous %}
+      <a class="pagination-btn pagination-edge" href="{% querystring page=1 %}" aria-label="Halaman pertama">«</a>
+      <a class="pagination-btn pagination-text" href="{% querystring page=page_obj.previous_page_number %}">‹ <span>Sebelumnya</span></a>
+    {% else %}
+      <span class="pagination-btn pagination-edge is-disabled" aria-hidden="true">«</span>
+      <span class="pagination-btn pagination-text is-disabled" aria-hidden="true">‹ <span>Sebelumnya</span></span>
+    {% endif %}
+
+    <span class="pagination-current" aria-current="page">
+      <small>Halaman</small>
+      <strong>{{ page_obj.number }}</strong>
+      <span>/ {{ page_obj.paginator.num_pages }}</span>
+    </span>
+
+    {% if page_obj.has_next %}
+      <a class="pagination-btn pagination-text" href="{% querystring page=page_obj.next_page_number %}"><span>Berikutnya</span> ›</a>
+      <a class="pagination-btn pagination-edge" href="{% querystring page=page_obj.paginator.num_pages %}" aria-label="Halaman terakhir">»</a>
+    {% else %}
+      <span class="pagination-btn pagination-text is-disabled" aria-hidden="true"><span>Berikutnya</span> ›</span>
+      <span class="pagination-btn pagination-edge is-disabled" aria-hidden="true">»</span>
+    {% endif %}
+  </div>
+</nav>
+{% endif %}

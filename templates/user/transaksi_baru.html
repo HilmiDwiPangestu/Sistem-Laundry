@@ -1,0 +1,170 @@
+{% extends 'layouts/base.html' %}
+{% load laundry_extras %}
+{% block title %}Nota Baru - Sani Laundry{% endblock %}
+{% block body_class %}transaction-entry-page{% endblock %}
+{% block content %}
+<section class="page-head split-head transaction-page-head">
+  <div>
+    <p class="eyebrow">Input cepat</p>
+    <h1>Nota Baru</h1>
+    <p>Pilih pelanggan, layanan, lalu isi berat. Total dihitung otomatis.</p>
+  </div>
+  <a class="btn btn-ghost" href="{% url 'user:user_index' %}">Batal</a>
+</section>
+
+<form method="post" class="transaction-form transaction-form-simple" data-customer-flow data-price-form>
+  {% csrf_token %}
+  {{ harga_layanan|json_script:"harga-layanan-data" }}
+
+  {% if form.non_field_errors %}<div class="alert alert-error">{{ form.non_field_errors }}</div>{% endif %}
+
+  <div class="transaction-workspace">
+    <div class="transaction-main-column">
+      <section class="card quick-entry-card">
+        <div class="quick-section">
+          <div class="quick-section-head">
+            <span class="quick-section-number">1</span>
+            <div><h2>Pelanggan</h2><p>Pilih pelanggan lama atau input pelanggan baru.</p></div>
+          </div>
+
+          <div class="customer-mode customer-mode-compact">
+            {% for radio in form.mode_pelanggan %}
+            <label class="mode-option">{{ radio.tag }}<span>{{ radio.choice_label }}</span></label>
+            {% endfor %}
+          </div>
+          {% for error in form.mode_pelanggan.errors %}<small class="field-error">{{ error }}</small>{% endfor %}
+
+          <div data-customer-old class="customer-old-box">
+            <div class="customer-pick-grid">
+              <div class="field">
+                <label for="customer-filter">Cari pelanggan</label>
+                <input class="form-control" id="customer-filter" type="search" placeholder="Ketik nama pelanggan..." autocomplete="off" autofocus>
+              </div>
+              <div class="field">
+                <label for="{{ form.pelanggan.id_for_label }}">Pilih pelanggan</label>
+                {{ form.pelanggan }}
+                {% for error in form.pelanggan.errors %}<small class="field-error">{{ error }}</small>{% endfor %}
+              </div>
+            </div>
+          </div>
+
+          <div data-customer-new class="customer-new-box">
+            <div class="customer-new-grid">
+              <div class="field customer-name-field">
+                <label for="{{ form.nama_baru.id_for_label }}">Nama pelanggan</label>
+                {{ form.nama_baru }}
+                {% for error in form.nama_baru.errors %}<small class="field-error">{{ error }}</small>{% endfor %}
+              </div>
+              <div class="field">
+                <label for="{{ form.jenis_plggn_baru.id_for_label }}">Jenis</label>
+                {{ form.jenis_plggn_baru }}
+                {% for error in form.jenis_plggn_baru.errors %}<small class="field-error">{{ error }}</small>{% endfor %}
+              </div>
+              <div class="field customer-note-field">
+                <label for="{{ form.alamat_baru.id_for_label }}">Alamat / keterangan <span class="label-optional">opsional</span></label>
+                {{ form.alamat_baru }}
+                {% for error in form.alamat_baru.errors %}<small class="field-error">{{ error }}</small>{% endfor %}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="quick-divider"></div>
+
+        <div class="quick-section">
+          <div class="quick-section-head">
+            <span class="quick-section-number">2</span>
+            <div><h2>Data Laundry</h2><p>Pilih jenis laundry dan kecepatan secara terpisah, lalu masukkan berat cucian.</p></div>
+          </div>
+
+          <p class="service-choice-caption">Jenis laundry</p>
+          <div class="service-choice-grid" role="group" aria-label="Pilih jenis laundry">
+            <button class="service-choice" type="button" data-service-choice data-kind="cs" data-price-reguler="{{ harga_layanan.reguler_cuci_setrika }}" data-price-express="{{ harga_layanan.express }}">
+              <span class="service-choice-name">Cuci Setrika</span>
+              <strong><span data-choice-price>{{ harga_layanan.reguler_cuci_setrika|rupiah }}</span><small>/kg</small></strong>
+              <em data-choice-speed-label>Tarif reguler</em>
+            </button>
+            <button class="service-choice" type="button" data-service-choice data-kind="c" data-price-reguler="{{ harga_layanan.reguler_cuci_lipat }}" data-price-express="{{ harga_layanan.express }}">
+              <span class="service-choice-name">Cuci Lipat</span>
+              <strong><span data-choice-price>{{ harga_layanan.reguler_cuci_lipat|rupiah }}</span><small>/kg</small></strong>
+              <em data-choice-speed-label>Tarif reguler</em>
+            </button>
+            <button class="service-choice" type="button" data-service-choice data-kind="s" data-price-reguler="{{ harga_layanan.reguler_setrika }}" data-price-express="{{ harga_layanan.express }}">
+              <span class="service-choice-name">Setrika Saja</span>
+              <strong><span data-choice-price>{{ harga_layanan.reguler_setrika|rupiah }}</span><small>/kg</small></strong>
+              <em data-choice-speed-label>Tarif reguler</em>
+            </button>
+          </div>
+
+          <p class="service-choice-caption">Kecepatan pengerjaan</p>
+          <div class="service-speed-grid" role="group" aria-label="Pilih kecepatan pengerjaan">
+            <button class="service-speed-choice" type="button" data-speed-choice="reguler" aria-pressed="true"><strong>Reguler</strong><span>Mengikuti tarif jenis laundry</span></button>
+            <button class="service-speed-choice" type="button" data-speed-choice="express" aria-pressed="false"><strong>Express</strong><span>{{ harga_layanan.express|rupiah }}/kg untuk semua jenis</span></button>
+          </div>
+
+          <div class="service-system-fields" aria-hidden="true">
+            {{ form.jenis }}
+            {{ form.layanan }}
+          </div>
+          {% for error in form.jenis.errors %}<small class="field-error">{{ error }}</small>{% endfor %}
+          {% for error in form.layanan.errors %}<small class="field-error">{{ error }}</small>{% endfor %}
+
+          <div class="laundry-input-grid">
+            <div class="field weight-field">
+              <label for="{{ form.berat.id_for_label }}">Berat cucian</label>
+              <div class="weight-input-wrap">{{ form.berat }}<span>kg</span></div>
+              <small class="field-help weight-help" id="weight-input-help">Bisa pakai koma atau titik · maksimal 3 angka desimal, mis. 3,81 atau 3,815.</small>
+              {% for error in form.berat.errors %}<small class="field-error">{{ error }}</small>{% endfor %}
+            </div>
+            <div class="field date-field">
+              <label for="{{ form.tgl.id_for_label }}">Tanggal masuk</label>
+              {{ form.tgl }}
+              {% for error in form.tgl.errors %}<small class="field-error">{{ error }}</small>{% endfor %}
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <aside class="transaction-side-column">
+      <section class="card transaction-summary-card">
+        <div class="summary-label">Ringkasan Nota</div>
+        <div class="summary-service">
+          <span>Jenis laundry &amp; kecepatan</span>
+          <strong data-service-name>Belum dipilih</strong>
+        </div>
+
+        <div class="price-calculator price-calculator-simple" data-price-calculator>
+          <div class="price-calc-copy">
+            <span class="price-calc-label">Perhitungan</span>
+            <strong data-price-formula>Isi berat untuk menghitung.</strong>
+            <small data-price-rounding>Pembulatan otomatis ke ribuan sesuai aturan.</small>
+          </div>
+          <div class="price-calc-total">
+            <span>Total</span>
+            <strong data-price-total>Rp0</strong>
+            <small data-price-rate>Tarif belum dipilih</small>
+          </div>
+        </div>
+
+        <div class="summary-rate-list">
+          <div><span>Express</span><strong>{{ harga_layanan.express|rupiah }}</strong></div>
+          <div><span>Cuci Setrika</span><strong>{{ harga_layanan.reguler_cuci_setrika|rupiah }}</strong></div>
+          <div><span>Cuci Lipat</span><strong>{{ harga_layanan.reguler_cuci_lipat|rupiah }}</strong></div>
+          <div><span>Setrika Saja</span><strong>{{ harga_layanan.reguler_setrika|rupiah }}</strong></div>
+        </div>
+
+        <div class="summary-desktop-actions">
+          <button class="btn btn-primary btn-lg btn-block transaction-save" type="submit">Simpan Nota</button>
+          <a class="summary-cancel" href="{% url 'user:user_index' %}">Batal dan kembali</a>
+        </div>
+      </section>
+    </aside>
+  </div>
+
+  <div class="mobile-transaction-actions" aria-label="Aksi simpan nota">
+    <button class="btn btn-primary btn-lg btn-block mobile-transaction-save" type="submit">Simpan Nota</button>
+    <a class="mobile-transaction-cancel" href="{% url 'user:user_index' %}">Batal dan kembali</a>
+  </div>
+</form>
+{% endblock %}

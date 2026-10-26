@@ -1,0 +1,113 @@
+{% extends 'admin_panel/base.html' %}
+{% load laundry_extras %}
+{% block title %}Monitor Nota Real-time{% endblock %}
+{% block page_heading %}Monitor Nota Real-time{% endblock %}
+{% block content %}
+<section class="admin-page-head">
+  <div>
+    <span class="admin-kicker">Pemantauan saja</span>
+    <h1>Monitor Nota Real-time</h1>
+    <p>Daftar nota diperbarui otomatis setiap 5 detik. Halaman ini hanya untuk melihat data dan tidak mengubah transaksi.</p>
+  </div>
+</section>
+
+<section class="admin-panel-card monitor-toolbar">
+  <div class="monitor-date-field">
+    <label for="monitor-date">Tanggal pemantauan</label>
+    <input class="form-control" type="date" id="monitor-date" value="{{ selected_date|date:'Y-m-d' }}" data-today="{{ today|date:'Y-m-d' }}">
+    <small>Pilih tanggal sebelumnya untuk melihat nota pada hari tersebut. Data tanggal pilihan tetap diperbarui otomatis.</small>
+  </div>
+  <div class="monitor-live-state"><span class="monitor-live-dot" id="monitor-live-dot"></span><div><strong id="monitor-live-label">Menghubungkan…</strong><small id="monitor-updated-at">Menunggu data pertama</small></div></div>
+</section>
+
+<section class="admin-stat-grid admin-stat-grid-4 monitor-stats" aria-live="polite">
+  <article><span>Total nota</span><strong id="monitor-total-nota">—</strong><small id="monitor-selected-label">Tanggal terpilih</small></article>
+  <article><span>Total pendapatan</span><strong class="admin-stat-money" id="monitor-total-pendapatan">—</strong><small>Akumulasi pada tanggal terpilih</small></article>
+  <article><span>Belum selesai</span><strong id="monitor-belum">—</strong><small>Nota dalam proses</small></article>
+  <article><span>Selesai</span><strong id="monitor-selesai">—</strong><small>Nota berstatus selesai</small></article>
+</section>
+
+<section class="admin-panel-card monitor-table-card">
+  <div class="admin-panel-head"><div><span>Data transaksi</span><h2 id="monitor-table-heading">Nota pada tanggal terpilih</h2></div><span class="monitor-readonly-badge">Pantau saja</span></div>
+  <div class="table-wrap">
+    <table class="admin-responsive-table monitor-table">
+      <thead><tr><th>Nomor nota</th><th>Pelanggan</th><th>Jenis / layanan</th><th>Berat</th><th>Item</th><th>Total</th><th>Status</th></tr></thead>
+      <tbody id="monitor-notes-body"><tr><td colspan="7"><div class="empty-state">Memuat nota…</div></td></tr></tbody>
+    </table>
+  </div>
+  <div class="monitor-table-foot"><span id="monitor-result-count">Memuat data…</span><span>Daftar menampilkan hingga 200 nota terbaru berdasarkan nomor nota.</span></div>
+</section>
+
+<style>
+.monitor-toolbar{display:flex;align-items:center;justify-content:space-between;gap:20px}.monitor-date-field{display:grid;gap:6px;max-width:390px;width:100%}.monitor-date-field label{font-size:11px;font-weight:850}.monitor-date-field small{font-size:10px;color:var(--muted);line-height:1.5}.monitor-live-state{display:flex;align-items:center;gap:10px;min-width:160px}.monitor-live-state strong,.monitor-live-state small{display:block}.monitor-live-state strong{font-size:12px}.monitor-live-state small{font-size:10px;color:var(--muted);margin-top:3px}.monitor-live-dot{width:10px;height:10px;border-radius:50%;background:#b8b8b8;box-shadow:0 0 0 4px #eee;flex:none}.monitor-live-dot.is-live{background:#159447;box-shadow:0 0 0 4px #e1f6e9}.monitor-live-dot.is-error{background:#d93025;box-shadow:0 0 0 4px #fde9e7}.monitor-readonly-badge{font-size:10px;font-weight:850;color:#17663a;background:#e7f7ec;border-radius:999px;padding:7px 10px;white-space:nowrap}.monitor-table td,.monitor-table th{white-space:nowrap}.monitor-table td:nth-child(2){white-space:normal;min-width:130px}.monitor-table-foot{display:flex;justify-content:space-between;gap:12px;border-top:1px solid var(--line);margin-top:12px;padding-top:12px;color:var(--muted);font-size:10px}.monitor-status{display:inline-flex;padding:5px 8px;border-radius:999px;font-size:10px;font-weight:850}.monitor-status.is-done{background:#e7f7ec;color:#17663a}.monitor-status.is-pending{background:#fff3d5;color:#805b00}.monitor-empty{text-align:center;color:var(--muted);padding:28px 12px!important;white-space:normal!important}@media(max-width:680px){.monitor-toolbar{align-items:stretch;flex-direction:column}.monitor-date-field{max-width:none}.monitor-live-state{padding-top:4px}.monitor-table-foot{flex-direction:column}.monitor-table td,.monitor-table th{font-size:10px;padding:9px 8px}}
+</style>
+<script>
+(function(){
+  const dateInput=document.getElementById('monitor-date');
+  const endpoint="{% url 'adminpanel:note_monitor_data' %}";
+  const body=document.getElementById('monitor-notes-body');
+  const liveDot=document.getElementById('monitor-live-dot');
+  const liveLabel=document.getElementById('monitor-live-label');
+  const updatedAt=document.getElementById('monitor-updated-at');
+  const money=new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',maximumFractionDigits:0});
+  let serverToday=dateInput.dataset.today;
+  let followToday=dateInput.value===serverToday;
+  let busy=false;
+  let lastSnapshot='';
+  function el(tag,text,cls){const node=document.createElement(tag);if(text!==undefined)node.textContent=text;if(cls)node.className=cls;return node;}
+  function setCell(row,text){row.appendChild(el('td',text));}
+  function render(data){
+    document.getElementById('monitor-total-nota').textContent=data.summary.total_nota;
+    document.getElementById('monitor-total-pendapatan').textContent=money.format(data.summary.total_pendapatan);
+    document.getElementById('monitor-belum').textContent=data.summary.belum_selesai;
+    document.getElementById('monitor-selesai').textContent=data.summary.selesai;
+    document.getElementById('monitor-selected-label').textContent=data.selected_date===data.today?'Hari ini':('Tanggal '+data.selected_date);
+    document.getElementById('monitor-table-heading').textContent='Nota tanggal '+data.selected_date;
+    document.getElementById('monitor-result-count').textContent=data.notes.length+' nota ditampilkan'+(data.summary.total_nota>data.notes.length?' dari '+data.summary.total_nota+' nota':'');
+    const fragment=document.createDocumentFragment();
+    if(!data.notes.length){const row=el('tr');const cell=el('td','Belum ada nota pada tanggal ini.','monitor-empty');cell.colSpan=7;row.appendChild(cell);fragment.appendChild(row);}
+    data.notes.forEach(n=>{
+      const row=el('tr');
+      setCell(row,n.nomor);
+      setCell(row,n.pelanggan);
+      setCell(row,n.jenis+' · '+n.layanan);
+      setCell(row,n.berat+' kg');
+      setCell(row,String(n.total_item));
+      const total=el('td');total.appendChild(el('strong',money.format(n.harga)));row.appendChild(total);
+      const statusCell=el('td');statusCell.appendChild(el('span',n.status,'monitor-status '+(n.status_code==='Sudah'?'is-done':'is-pending')));row.appendChild(statusCell);
+      fragment.appendChild(row);
+    });
+    const snapshot=JSON.stringify(data.notes.map(n=>n.id));
+    if(lastSnapshot && snapshot!==lastSnapshot && data.selected_date===data.today){
+      liveLabel.textContent='Ada perubahan nota';
+    } else {liveLabel.textContent=data.selected_date===data.today?'Live · Hari ini':'Live · Tanggal pilihan';}
+    lastSnapshot=snapshot;
+    body.replaceChildren(fragment);
+    updatedAt.textContent='Diperbarui '+data.updated_at;
+    liveDot.className='monitor-live-dot is-live';
+  }
+  async function poll(){
+    if(busy)return;
+    busy=true;
+    let refetch=false;
+    try{
+      const url=new URL(endpoint,window.location.origin);url.searchParams.set('tanggal',dateInput.value);
+      const response=await fetch(url.toString(),{cache:'no-store',credentials:'same-origin',headers:{'Accept':'application/json'}});
+      if(!response.ok)throw new Error('HTTP '+response.status);
+      const data=await response.json();
+      if(data.today!==serverToday){
+        const wasFollowingToday=followToday;
+        serverToday=data.today;
+        dateInput.dataset.today=serverToday;
+        if(wasFollowingToday){dateInput.value=serverToday;refetch=true;}
+      }
+      if(dateInput.value!==data.selected_date)refetch=true;
+      else render(data);
+    }catch(error){liveLabel.textContent='Koneksi pemantauan terputus';updatedAt.textContent='Akan mencoba lagi otomatis';liveDot.className='monitor-live-dot is-error';}
+    finally{busy=false;if(refetch)window.setTimeout(poll,0);}
+  }
+  dateInput.addEventListener('change',()=>{followToday=dateInput.value===serverToday;lastSnapshot='';liveLabel.textContent='Memuat tanggal pilihan…';poll();});
+  poll();window.setInterval(poll,5000);
+})();
+</script>
+{% endblock %}

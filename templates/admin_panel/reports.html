@@ -1,0 +1,22 @@
+{% extends 'admin_panel/base.html' %}
+{% load laundry_extras %}
+{% block title %}Laporan & Keuangan{% endblock %}
+{% block page_heading %}Laporan & Keuangan{% endblock %}
+{% block content %}
+<section class="admin-page-head"><div><span class="admin-kicker">Khusus admin</span><h1>Laporan & Keuangan</h1><p>Rekap pendapatan hanya tersedia untuk administrator. Pilih periode lalu download laporan bila diperlukan.</p></div><div class="admin-head-actions"><a class="btn btn-secondary" href="{% url 'adminpanel:report_download' %}?periode={{ periode }}">↓ CSV</a><a class="btn btn-primary" href="{% url 'adminpanel:report_pdf_download' %}?periode={{ periode }}">↓ PDF</a></div></section>
+
+<section class="admin-panel-card admin-report-filter"><form method="get" class="admin-report-filter-form"><div class="field"><label for="periode">Periode</label><input class="form-control" type="month" id="periode" name="periode" value="{{ periode }}"></div><button class="btn btn-secondary" type="submit">Tampilkan</button></form></section>
+
+<section class="admin-stat-grid admin-stat-grid-4">
+  <article><span>Total nota</span><strong>{{ total_nota }}</strong><small>periode {{ periode }}</small></article>
+  <article><span>Total pendapatan</span><strong class="admin-stat-money">{{ total_pendapatan|rupiah }}</strong><small>akumulasi transaksi</small></article>
+  <article><span>Selesai</span><strong>{{ total_selesai }}</strong><small>nota selesai</small></article>
+  <article><span>Belum selesai</span><strong>{{ total_belum }}</strong><small>masih diproses</small></article>
+</section>
+
+<section class="admin-panel-card admin-table-card">
+  <div class="admin-panel-head"><div><span>Rekap harian</span><h2>Transaksi per Tanggal</h2></div></div>
+  <div class="table-wrap"><table class="admin-responsive-table"><thead><tr><th>Tanggal</th><th>Jumlah Nota</th><th>Pendapatan</th><th class="text-right">Aksi</th></tr></thead><tbody>{% for row in laporan %}<tr><td data-label="Tanggal"><strong>{{ row.tgl|date:'d F Y' }}</strong></td><td data-label="Jumlah nota">{{ row.total_nota }}</td><td data-label="Pendapatan">{{ row.total_pendapatan|rupiah }}</td><td data-label="Aksi" class="text-right"><div class="actions-cell"><a class="btn btn-ghost btn-sm" href="{% url 'adminpanel:report_detail' row.tgl|date:'Y-m-d' %}">Detail</a><a class="btn btn-secondary btn-sm" href="{% url 'adminpanel:report_daily_download' row.tgl|date:'Y-m-d' %}">CSV</a><a class="btn btn-primary btn-sm" href="{% url 'adminpanel:report_daily_pdf_download' row.tgl|date:'Y-m-d' %}">PDF</a></div></td></tr>{% empty %}<tr><td colspan="4"><div class="empty-state">Belum ada transaksi pada periode ini.</div></td></tr>{% endfor %}</tbody></table></div>
+</section>
+{% include 'components/pagination.html' with page_obj=page_obj %}
+{% endblock %}

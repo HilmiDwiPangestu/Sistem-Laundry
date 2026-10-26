@@ -1,0 +1,7 @@
+{% extends 'admin_panel/base.html' %}
+{% block title %}{% if mode == 'create' %}Tambah Pelanggan{% else %}Edit Pelanggan{% endif %}{% endblock %}
+{% block page_heading %}Pelanggan{% endblock %}
+{% block content %}
+<section class="admin-page-head"><div><a class="back-link" href="{% url 'adminpanel:customers' %}">← Kembali ke Pelanggan</a><span class="admin-kicker">Data pelanggan</span><h1>{% if mode == 'create' %}Tambah Pelanggan{% else %}Edit {{ pelanggan_obj.nama }}{% endif %}</h1><p>Simpan data yang diperlukan untuk mempercepat transaksi berikutnya.</p></div></section>
+<section class="admin-panel-card admin-form-narrow"><form method="post" class="admin-form-grid-2">{% csrf_token %}{% for field in form %}<div class="field {% if field.name == 'alamat' %}field-wide{% endif %}">{{ field.label_tag }}{{ field }}{% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}{% for error in field.errors %}<small class="field-error">{{ error }}</small>{% endfor %}</div>{% endfor %}<div class="admin-form-actions field-wide"><a class="btn btn-ghost" href="{% url 'adminpanel:customers' %}">Batal</a><button class="btn btn-primary" type="submit">Simpan</button></div></form></section>
+{% endblock %}

@@ -1,0 +1,72 @@
+{% extends 'admin_panel/base.html' %}
+{% block title %}Landing Page{% endblock %}
+{% block page_heading %}Landing Page{% endblock %}
+{% block content %}
+<section class="admin-page-head">
+  <div><span class="admin-kicker">Website publik</span><h1>Kelola konten landing page.</h1><p>Semua teks utama website dapat diubah dari sini tanpa membuka source code.</p></div>
+  <div class="admin-head-actions"><a class="btn btn-secondary" href="{% url 'landing' %}" target="_blank">Preview Website</a></div>
+</section>
+<form method="post" class="admin-editor-form">
+  {% csrf_token %}
+  {% if form.errors %}
+  <div class="alert alert-error">
+    {% for field in form %}{% for error in field.errors %}<div class="field-error">{{ field.label }}: {{ error }}</div>{% endfor %}{% endfor %}
+    {% for error in form.non_field_errors %}<div class="field-error">{{ error }}</div>{% endfor %}
+  </div>
+  {% endif %}
+  <section class="admin-panel-card admin-form-section">
+    <div class="admin-panel-head"><div><span>Bagian 1</span><h2>Hero / Tampilan Utama</h2></div><label class="admin-toggle">{{ form.aktif }} <span>{{ form.aktif.label }}</span></label></div>
+    <div class="admin-form-grid-2">
+      <div class="field"><label>{{ form.hero_badge.label }}</label>{{ form.hero_badge }}{% for e in form.hero_badge.errors %}<small class="field-error">{{ e }}</small>{% endfor %}</div>
+      <div class="field field-wide"><label>{{ form.hero_title.label }}</label>{{ form.hero_title }}{% for e in form.hero_title.errors %}<small class="field-error">{{ e }}</small>{% endfor %}</div>
+      <div class="field field-wide"><label>{{ form.hero_text.label }}</label>{{ form.hero_text }}</div>
+      <div class="field"><label>{{ form.hero_primary_label.label }}</label>{{ form.hero_primary_label }}</div>
+      <div class="field"><label>{{ form.hero_secondary_label.label }}</label>{{ form.hero_secondary_label }}</div>
+    </div>
+  </section>
+
+  <section class="admin-panel-card admin-form-section">
+    <div class="admin-panel-head"><div><span>Bagian 2</span><h2>Tentang & Keunggulan</h2></div></div>
+    <div class="admin-form-grid-2">
+      <div class="field"><label>{{ form.about_kicker.label }}</label>{{ form.about_kicker }}</div>
+      <div class="field field-wide"><label>{{ form.about_title.label }}</label>{{ form.about_title }}</div>
+      <div class="field field-wide"><label>{{ form.about_text.label }}</label>{{ form.about_text }}</div>
+    </div>
+    <div class="admin-benefit-editor">
+      <div><div class="field"><label>{{ form.benefit_1_title.label }}</label>{{ form.benefit_1_title }}</div><div class="field"><label>{{ form.benefit_1_text.label }}</label>{{ form.benefit_1_text }}</div></div>
+      <div><div class="field"><label>{{ form.benefit_2_title.label }}</label>{{ form.benefit_2_title }}</div><div class="field"><label>{{ form.benefit_2_text.label }}</label>{{ form.benefit_2_text }}</div></div>
+      <div><div class="field"><label>{{ form.benefit_3_title.label }}</label>{{ form.benefit_3_title }}</div><div class="field"><label>{{ form.benefit_3_text.label }}</label>{{ form.benefit_3_text }}</div></div>
+    </div>
+  </section>
+
+  <section class="admin-panel-card admin-form-section">
+    <div class="admin-panel-head"><div><span>Bagian 3</span><h2>Layanan & Harga</h2></div><label class="admin-toggle">{{ form.tampilkan_harga }} <span>{{ form.tampilkan_harga.label }}</span></label></div>
+    <div class="admin-form-grid-2">
+      <div class="field"><label>{{ form.services_title.label }}</label>{{ form.services_title }}</div>
+      <div class="field"><label>{{ form.services_text.label }}</label>{{ form.services_text }}</div>
+      <div class="field"><label>{{ form.service_express_text.label }}</label>{{ form.service_express_text }}</div>
+      <div class="field"><label>{{ form.service_cuci_setrika_text.label }}</label>{{ form.service_cuci_setrika_text }}</div>
+      <div class="field"><label>{{ form.service_cuci_lipat_text.label }}</label>{{ form.service_cuci_lipat_text }}</div>
+      <div class="field"><label>{{ form.service_setrika_text.label }}</label>{{ form.service_setrika_text }}</div>
+    </div>
+  </section>
+
+  <section class="admin-panel-card admin-form-section">
+    <div class="admin-panel-head"><div><span>Bagian 4</span><h2>Proses & Ajakan</h2></div></div>
+    <div class="admin-form-grid-2">
+      <div class="field"><label>{{ form.process_title.label }}</label>{{ form.process_title }}</div>
+      <div class="field"><label>{{ form.process_text.label }}</label>{{ form.process_text }}</div>
+      <div class="field"><label>{{ form.process_step_1_title.label }}</label>{{ form.process_step_1_title }}</div>
+      <div class="field"><label>{{ form.process_step_1_text.label }}</label>{{ form.process_step_1_text }}</div>
+      <div class="field"><label>{{ form.process_step_2_title.label }}</label>{{ form.process_step_2_title }}</div>
+      <div class="field"><label>{{ form.process_step_2_text.label }}</label>{{ form.process_step_2_text }}</div>
+      <div class="field"><label>{{ form.process_step_3_title.label }}</label>{{ form.process_step_3_title }}</div>
+      <div class="field"><label>{{ form.process_step_3_text.label }}</label>{{ form.process_step_3_text }}</div>
+      <div class="field"><label>{{ form.cta_title.label }}</label>{{ form.cta_title }}</div>
+      <div class="field"><label>{{ form.cta_text.label }}</label>{{ form.cta_text }}</div>
+      <div class="field field-wide"><label>{{ form.footer_note.label }}</label>{{ form.footer_note }}</div>
+    </div>
+  </section>
+  <div class="admin-sticky-save"><a class="btn btn-secondary" href="{% url 'adminpanel:dashboard' %}">Batal</a><button class="btn btn-primary" type="submit">Simpan Landing Page</button></div>
+</form>
+{% endblock %}

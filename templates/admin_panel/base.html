@@ -1,0 +1,94 @@
+{% load static %}
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#4f46e5">
+  <meta name="color-scheme" content="light">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <title>{% block title %}Admin Center{% endblock %} - Sani Laundry</title>
+  <link rel="icon" type="image/png" href="{% static 'img/sani-laundry-logo.png' %}">
+  <link rel="apple-touch-icon" href="{% static 'pwa/apple-touch-icon.png' %}">
+  <link rel="manifest" href="{% static 'pwa/manifest.webmanifest' %}">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.26.25/dist/sweetalert2.min.css">
+  <link rel="stylesheet" href="{% static 'css/app.css' %}?v=57">
+  <link rel="stylesheet" href="{% static 'css/redesign-v57.css' %}?v=57">
+</head>
+<body class="admin-body {% block body_class %}{% endblock %}">
+  <div class="admin-shell">
+    <aside class="admin-sidebar" id="admin-sidebar" aria-label="Navigasi Admin Center">
+      <a class="admin-brand" href="{% url 'adminpanel:dashboard' %}">
+        <span><img src="{% static 'img/sani-laundry-logo.png' %}" alt="Logo Sani Laundry"></span>
+        <div><strong>Sani Laundry</strong><small>Admin Center</small></div>
+      </a>
+
+      <nav class="admin-nav">
+        <p>Kontrol utama</p>
+        <a class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" href="{% url 'adminpanel:dashboard' %}"><span>⌂</span>Dashboard</a>
+        <a class="{% if request.resolver_match.url_name == 'landing' %}active{% endif %}" href="{% url 'adminpanel:landing' %}"><span>◫</span>Landing Page</a>
+        <a class="{% if 'employee' in request.resolver_match.url_name or request.resolver_match.url_name == 'employees' %}active{% endif %}" href="{% url 'adminpanel:employees' %}"><span>◎</span>Karyawan</a>
+        <a class="{% if request.resolver_match.url_name == 'settings' %}active{% endif %}" href="{% url 'adminpanel:settings' %}"><span>⚙</span>Pengaturan & Harga</a>
+        <a class="{% if request.resolver_match.url_name == 'control_center' %}active{% endif %}" href="{% url 'adminpanel:control_center' %}"><span>▣</span>Control Center & Printer</a>
+        <a class="{% if request.resolver_match.url_name == 'note_monitor' %}active{% endif %}" href="{% url 'adminpanel:note_monitor' %}"><span>◷</span>Monitor Nota Real-time</a>
+
+        <p>Operasional admin</p>
+        <a class="{% if request.resolver_match.url_name == 'operations' %}active{% endif %}" href="{% url 'adminpanel:operations' %}"><span>◆</span>Layanan Operasional</a>
+        <a class="{% if request.resolver_match.url_name == 'notas' or 'nota_' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'adminpanel:notas' %}"><span>▤</span>Kelola Nota</a>
+        <a class="{% if request.resolver_match.url_name == 'customers' or 'customer_' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'adminpanel:customers' %}"><span>◉</span>Pelanggan</a>
+        <a class="{% if request.resolver_match.url_name == 'reports' or 'report_' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'adminpanel:reports' %}"><span>▥</span>Laporan & Keuangan</a>
+      </nav>
+
+      <div class="admin-sidebar-bottom">
+        <a href="{% url 'landing' %}" target="_blank" rel="noopener">↗ Lihat Website</a>
+        <form method="post" action="{% url 'logout' %}" data-confirm="Keluar dari Admin Center?" data-confirm-title="Keluar dari akun" data-confirm-ok="Ya, keluar">
+          {% csrf_token %}<button type="submit">Keluar</button>
+        </form>
+      </div>
+    </aside>
+
+    <div class="admin-overlay" data-admin-overlay></div>
+
+    <div class="admin-main">
+      <header class="admin-topbar">
+        <button type="button" class="admin-menu-toggle" data-admin-open aria-label="Buka menu">☰</button>
+        <div><strong>{% block page_heading %}Admin Center{% endblock %}</strong><span>Kontrol seluruh sistem Sani Laundry</span></div>
+        <div class="admin-account"><span>{{ request.user.get_full_name|default:request.user.username|slice:':1'|upper }}</span><div><strong>{{ request.user.get_full_name|default:request.user.username }}</strong><small>Administrator</small></div></div>
+      </header>
+
+      <main class="admin-content" id="admin-main-content">
+        {% if messages %}
+          <div class="messages" aria-live="polite">
+            {% for message in messages %}<div class="alert alert-{{ message.tags|default:'info' }}" data-alert><span>{{ message }}</span><button type="button" class="alert-close" data-alert-close aria-label="Tutup">×</button></div>{% endfor %}
+          </div>
+        {% endif %}
+        {% block content %}{% endblock %}
+      </main>
+    </div>
+  </div>
+
+  <nav class="admin-mobile-nav" aria-label="Navigasi cepat admin">
+    <a class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" href="{% url 'adminpanel:dashboard' %}"><span>⌂</span><small>Dashboard</small></a>
+    <a class="{% if request.resolver_match.url_name == 'operations' or request.resolver_match.url_name == 'notas' or 'nota_' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'adminpanel:operations' %}"><span>◆</span><small>Operasional</small></a>
+    <a class="{% if request.resolver_match.url_name == 'reports' or 'report_' in request.resolver_match.url_name %}active{% endif %}" href="{% url 'adminpanel:reports' %}"><span>▥</span><small>Laporan</small></a>
+    <a class="{% if request.resolver_match.url_name == 'settings' %}active{% endif %}" href="{% url 'adminpanel:settings' %}"><span>⚙</span><small>Pengaturan</small></a>
+  </nav>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.26.25/dist/sweetalert2.min.js" defer></script>
+  <script src="{% static 'js/alerts.js' %}?v=57" defer></script>
+  <script src="{% static 'js/app.js' %}?v=57" defer></script>
+  <script>
+  document.addEventListener('DOMContentLoaded', function(){
+    const overlay=document.querySelector('[data-admin-overlay]');
+    const open=document.querySelector('[data-admin-open]');
+    function close(){document.body.classList.remove('admin-menu-open');}
+    if(open) open.addEventListener('click',()=>document.body.classList.add('admin-menu-open'));
+    if(overlay) overlay.addEventListener('click',close);
+    document.querySelectorAll('.admin-nav a').forEach(a=>a.addEventListener('click', close));
+    document.addEventListener('keydown', e=>{if(e.key==='Escape') close();});
+  });
+  </script>
+</body>
+</html>

@@ -1,0 +1,285 @@
+{% load static humanize %}
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#4f46e5">
+  <meta name="color-scheme" content="light">
+  <title>{{ laundry.nama_usaha|default:"Sani Laundry" }}</title>
+  <meta name="description" content="{{ landing.hero_text|truncatechars:155 }}">
+  <link rel="icon" type="image/png" href="{% static 'img/sani-laundry-logo.png' %}">
+  <link rel="apple-touch-icon" href="{% static 'pwa/apple-touch-icon.png' %}">
+  <link rel="manifest" href="{% static 'pwa/manifest.webmanifest' %}">
+  <link rel="stylesheet" href="{% static 'css/app.css' %}?v=58">
+  <link rel="stylesheet" href="{% static 'css/landing-v58.css' %}?v=58">
+</head>
+<body class="public-site public-site-v30 public-site-v58">
+  <a class="skip-link" href="#konten-utama">Lewati ke konten</a>
+
+  <header class="public-header public-header-v30" id="top">
+    <div class="public-nav-shell public-nav-shell-v30">
+      <a class="public-brand public-brand-v30" href="#top" aria-label="{{ laundry.nama_usaha|default:'Sani Laundry' }}">
+        <span class="public-brand-logo public-brand-logo-v30"><img src="{% static 'img/sani-laundry-logo.png' %}" alt="Logo {{ laundry.nama_usaha|default:'Sani Laundry' }}"></span>
+        <span class="public-brand-copy-v30">
+          <strong>{{ laundry.nama_usaha|default:"Sani Laundry" }}</strong>
+          <small>{{ laundry.slogan|default:"Bersih • Wangi • Rapi" }}</small>
+        </span>
+      </a>
+
+      <nav class="public-nav public-nav-v30" aria-label="Navigasi landing page">
+        <a href="#tentang">Tentang</a>
+        <a href="#layanan">Layanan</a>
+        <a href="#proses">Cara Kerja</a>
+        <a href="#kontak">Kontak</a>
+      </nav>
+
+      <div class="public-nav-actions-v30">
+        <a class="public-login-btn public-login-btn-v30" href="{% url 'login' %}">Masuk Sistem <span aria-hidden="true">→</span></a>
+        <button class="public-menu-toggle-v30" type="button" aria-label="Buka menu" aria-expanded="false" aria-controls="public-mobile-menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+
+    <div class="public-mobile-menu-v30" id="public-mobile-menu" hidden>
+      <nav aria-label="Navigasi mobile">
+        <a href="#tentang">Tentang <span>01</span></a>
+        <a href="#layanan">Layanan <span>02</span></a>
+        <a href="#proses">Cara Kerja <span>03</span></a>
+        <a href="#kontak">Kontak <span>04</span></a>
+      </nav>
+      <a class="public-btn-v30 public-btn-dark-v30" href="{% url 'login' %}">Masuk ke Sistem Internal</a>
+    </div>
+  </header>
+
+  <main id="konten-utama">
+    <section class="public-hero public-hero-v30">
+      <div class="public-hero-orb-v30 public-hero-orb-a-v30" aria-hidden="true"></div>
+      <div class="public-hero-orb-v30 public-hero-orb-b-v30" aria-hidden="true"></div>
+      <div class="public-section public-hero-grid public-hero-grid-v30">
+        <div class="public-hero-copy public-hero-copy-v30" data-reveal>
+          <div class="public-hero-badge-row-v30">
+            <span class="public-eyebrow public-eyebrow-v30">{{ landing.hero_badge }}</span>
+            <span class="public-open-pill-v30"><i></i> Siap melayani</span>
+          </div>
+          <h1>{{ landing.hero_title }}</h1>
+          <p>{{ landing.hero_text }}</p>
+
+          <div class="public-hero-actions public-hero-actions-v30">
+            <a class="public-btn-v30 public-btn-primary-v30" href="#layanan">
+              {{ landing.hero_primary_label }} <span aria-hidden="true">↘</span>
+            </a>
+            {% if whatsapp_url %}
+              <a class="public-btn-v30 public-btn-secondary-v30" href="{{ whatsapp_url }}" target="_blank" rel="noopener">
+                {{ landing.hero_secondary_label }} <span aria-hidden="true">↗</span>
+              </a>
+            {% else %}
+              <a class="public-btn-v30 public-btn-secondary-v30" href="#kontak">{{ landing.hero_secondary_label }}</a>
+            {% endif %}
+          </div>
+
+          <div class="public-hero-facts-v30" aria-label="Ringkasan layanan">
+            <div><strong>{{ services|length }}</strong><span>Pilihan layanan</span></div>
+            {% if landing.tampilkan_harga and starting_price %}
+              <div><strong>Rp{{ starting_price|intcomma }}</strong><span>Mulai / kg</span></div>
+            {% endif %}
+            <div><strong>100%</strong><span>Nota tercatat</span></div>
+          </div>
+        </div>
+
+        <div class="public-hero-visual-v30" data-reveal data-reveal-delay="120">
+          <div class="public-visual-backdrop-v30" aria-hidden="true"></div>
+          <div class="public-showcase-v30">
+            <div class="public-showcase-top-v30">
+              <div class="public-showcase-brand-v30">
+                <img src="{% static 'img/sani-laundry-logo.png' %}" alt="">
+                <div><small>Laundry terpercaya</small><strong>{{ laundry.nama_usaha|default:"Sani Laundry" }}</strong></div>
+              </div>
+              <span class="public-showcase-status-v30"><i></i> Aktif</span>
+            </div>
+
+            <div class="public-showcase-ticket-v30">
+              <div class="public-ticket-head-v30">
+                <div><small>Pilihan layanan</small><strong>Cepat, rapi, transparan.</strong></div>
+                <span>SL</span>
+              </div>
+              <div class="public-ticket-services-v30">
+                {% for service in services|slice:":3" %}
+                  <div>
+                    <span class="public-ticket-service-icon-v30">{% if service.code == 'express' %}⚡{% elif service.code == 'reguler_cuci_setrika' %}✦{% elif service.code == 'reguler_cuci_lipat' %}≋{% else %}⌁{% endif %}</span>
+                    <div><strong>{{ service.title }}</strong><small>{{ service.description|truncatechars:46 }}</small></div>
+                    {% if landing.tampilkan_harga %}<b>Rp{{ service.price|intcomma }}<small>/kg</small></b>{% endif %}
+                  </div>
+                {% endfor %}
+              </div>
+              <div class="public-ticket-footer-v30">
+                <span>Harga tercatat dari sistem</span>
+                <span class="public-ticket-code-v30">••• •• ••••</span>
+              </div>
+            </div>
+
+            <div class="public-showcase-bottom-v30">
+              <span><i>✓</i> Reguler & Express</span>
+              <span><i>✓</i> Proses jelas</span>
+            </div>
+          </div>
+          <div class="public-floating-note-v30 public-floating-note-a-v30"><span>01</span><strong>Terima</strong><small>Cucian dicatat</small></div>
+          <div class="public-floating-note-v30 public-floating-note-b-v30"><span>03</span><strong>Siap</strong><small>Ambil cucian</small></div>
+        </div>
+      </div>
+
+      <div class="public-service-marquee-v30" aria-hidden="true">
+        <div>
+          {% for service in services %}<span>{{ service.title }} <i>✦</i></span>{% endfor %}
+          {% for service in services %}<span>{{ service.title }} <i>✦</i></span>{% endfor %}
+        </div>
+      </div>
+    </section>
+
+    <section class="public-section public-about-v30" id="tentang">
+      <div class="public-about-lead-v30" data-reveal>
+        <div>
+          <span class="public-kicker public-kicker-v30">{{ landing.about_kicker }}</span>
+          <h2>{{ landing.about_title }}</h2>
+        </div>
+        <div class="public-about-copy-v30">
+          <p>{{ landing.about_text }}</p>
+          <a href="#proses">Lihat cara kerjanya <span>→</span></a>
+        </div>
+      </div>
+
+      <div class="public-benefit-grid public-benefit-grid-v30">
+        <article data-reveal>
+          <div class="public-benefit-top-v30"><span>01</span><i>↗</i></div>
+          <h3>{{ landing.benefit_1_title }}</h3>
+          <p>{{ landing.benefit_1_text }}</p>
+        </article>
+        <article data-reveal data-reveal-delay="80">
+          <div class="public-benefit-top-v30"><span>02</span><i>↗</i></div>
+          <h3>{{ landing.benefit_2_title }}</h3>
+          <p>{{ landing.benefit_2_text }}</p>
+        </article>
+        <article data-reveal data-reveal-delay="160">
+          <div class="public-benefit-top-v30"><span>03</span><i>↗</i></div>
+          <h3>{{ landing.benefit_3_title }}</h3>
+          <p>{{ landing.benefit_3_text }}</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="public-services-wrap public-services-wrap-v30" id="layanan">
+      <div class="public-section">
+        <div class="public-services-head-v30" data-reveal>
+          <div>
+            <span class="public-kicker public-kicker-light-v30">Layanan & harga</span>
+            <h2>{{ landing.services_title }}</h2>
+          </div>
+          <p>{{ landing.services_text }}</p>
+        </div>
+
+        <div class="public-service-grid public-service-grid-v30">
+          {% for service in services %}
+          <article class="public-service-card public-service-card-v30 {% if service.code == 'express' %}is-featured{% endif %}" data-reveal data-reveal-delay="{{ forloop.counter0 }}0">
+            <div class="public-service-number-v30">0{{ forloop.counter }}</div>
+            <div class="public-service-card-body-v30">
+              <div class="public-service-top public-service-top-v30">
+                <span>{% if service.code == 'express' %}Prioritas{% else %}Reguler{% endif %}</span>
+                {% if service.code == 'express' %}<b>Express</b>{% endif %}
+              </div>
+              <h3>{{ service.title }}</h3>
+              <p>{{ service.description }}</p>
+              {% if landing.tampilkan_harga %}
+              <div class="public-price public-price-v30"><small>Tarif</small><strong>Rp{{ service.price|intcomma }}</strong><span>/kg</span></div>
+              {% endif %}
+            </div>
+            <div class="public-service-arrow-v30" aria-hidden="true">↗</div>
+          </article>
+          {% endfor %}
+        </div>
+        <div class="public-services-note-v30">
+          <span>Harga layanan dikelola langsung dari sistem.</span>
+          {% if whatsapp_url %}<a href="{{ whatsapp_url }}" target="_blank" rel="noopener">Tanya layanan via WhatsApp →</a>{% endif %}
+        </div>
+      </div>
+    </section>
+
+    <section class="public-section public-process public-process-v30" id="proses">
+      <div class="public-process-head-v30" data-reveal>
+        <span class="public-kicker public-kicker-v30">Alur pelayanan</span>
+        <div>
+          <h2>{{ landing.process_title }}</h2>
+          <p>{{ landing.process_text }}</p>
+        </div>
+      </div>
+
+      <div class="public-process-grid public-process-grid-v30">
+        <article data-reveal>
+          <div class="public-process-index-v30"><span>01</span></div>
+          <div class="public-process-copy-v30"><small>Langkah pertama</small><h3>{{ landing.process_step_1_title }}</h3><p>{{ landing.process_step_1_text }}</p></div>
+          <i aria-hidden="true">01</i>
+        </article>
+        <article data-reveal data-reveal-delay="80">
+          <div class="public-process-index-v30"><span>02</span></div>
+          <div class="public-process-copy-v30"><small>Proses utama</small><h3>{{ landing.process_step_2_title }}</h3><p>{{ landing.process_step_2_text }}</p></div>
+          <i aria-hidden="true">02</i>
+        </article>
+        <article data-reveal data-reveal-delay="160">
+          <div class="public-process-index-v30"><span>03</span></div>
+          <div class="public-process-copy-v30"><small>Siap digunakan</small><h3>{{ landing.process_step_3_title }}</h3><p>{{ landing.process_step_3_text }}</p></div>
+          <i aria-hidden="true">03</i>
+        </article>
+      </div>
+    </section>
+
+    <section class="public-cta public-cta-v30" id="kontak">
+      <div class="public-section public-cta-inner public-cta-inner-v30">
+        <div class="public-cta-copy-v30" data-reveal>
+          <span class="public-kicker public-kicker-dark public-kicker-dark-v30">Hubungi kami</span>
+          <h2>{{ landing.cta_title }}</h2>
+          <p>{{ landing.cta_text }}</p>
+          {% if whatsapp_url %}
+            <a class="public-btn-v30 public-btn-dark-v30" href="{{ whatsapp_url }}" target="_blank" rel="noopener">Chat WhatsApp <span>↗</span></a>
+          {% endif %}
+        </div>
+
+        <div class="public-contact-card public-contact-card-v30" data-reveal data-reveal-delay="100">
+          <div class="public-contact-brand-v30">
+            <img src="{% static 'img/sani-laundry-logo.png' %}" alt="">
+            <div><small>Informasi outlet</small><strong>{{ laundry.nama_usaha|default:"Sani Laundry" }}</strong></div>
+          </div>
+          <div class="public-contact-list-v30">
+            {% if laundry.alamat %}<div><span>Alamat</span><strong>{{ laundry.alamat }}</strong></div>{% endif %}
+            {% if laundry.telepon %}<div><span>Telepon / WhatsApp</span><strong>{{ laundry.telepon }}</strong></div>{% endif %}
+            <div><span>Layanan</span><strong>Reguler & Express</strong></div>
+          </div>
+          <div class="public-contact-foot-v30"><span>Untuk informasi lebih lanjut, hubungi kami melalui kontak di atas.</span></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="public-footer public-footer-v30">
+    <div class="public-section public-footer-inner public-footer-inner-v30">
+      <div class="public-footer-brand public-footer-brand-v30">
+        <img src="{% static 'img/sani-laundry-logo.png' %}" alt="">
+        <div><strong>{{ laundry.nama_usaha|default:"Sani Laundry" }}</strong><span>{{ landing.footer_note }}</span></div>
+      </div>
+      <div class="public-footer-right-v30">
+        <div class="public-footer-links public-footer-links-v30">
+          <a href="#tentang">Tentang</a><a href="#layanan">Layanan</a><a href="#proses">Proses</a><a href="#kontak">Kontak</a>
+        </div>
+        <small>© {% now "Y" %} {{ laundry.nama_usaha|default:"Sani Laundry" }}. Sistem internal terintegrasi.</small>
+      </div>
+    </div>
+  </footer>
+
+  {% if whatsapp_url %}
+    <a class="public-whatsapp-float-v30" href="{{ whatsapp_url }}" target="_blank" rel="noopener" aria-label="Hubungi Sani Laundry melalui WhatsApp">
+      <span>WA</span><strong>Hubungi Kami</strong>
+    </a>
+  {% endif %}
+
+  <script src="{% static 'js/landing.js' %}?v=58" defer></script>
+</body>
+</html>

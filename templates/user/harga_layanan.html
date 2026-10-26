@@ -1,0 +1,47 @@
+{% extends 'layouts/base.html' %}
+{% load laundry_extras %}
+{% block title %}Harga Layanan - Sani Laundry{% endblock %}
+{% block content %}
+<section class="page-head split-head">
+  <div>
+    <p class="eyebrow">Pengaturan operasional</p>
+    <h1>Harga Layanan</h1>
+    <p>Ubah tarif per kilogram di sini. Perubahan berlaku untuk nota baru dan tidak mengubah total nota lama yang sudah tersimpan.</p>
+  </div>
+  <a class="btn btn-ghost" href="{% url 'user:user_index' %}">Kembali</a>
+</section>
+
+<section class="pricing-overview">
+  <article class="pricing-card pricing-card-featured">
+    <span>Express</span><strong>{{ harga_layanan.express|rupiah }}</strong><small>per kilogram · semua jenis laundry</small>
+  </article>
+  <article class="pricing-card"><span>Reguler · Cuci Setrika</span><strong>{{ harga_layanan.reguler_cuci_setrika|rupiah }}</strong><small>per kilogram</small></article>
+  <article class="pricing-card"><span>Reguler · Cuci Lipat</span><strong>{{ harga_layanan.reguler_cuci_lipat|rupiah }}</strong><small>per kilogram</small></article>
+  <article class="pricing-card"><span>Reguler · Setrika Saja</span><strong>{{ harga_layanan.reguler_setrika|rupiah }}</strong><small>per kilogram</small></article>
+</section>
+
+<section class="card pricing-settings-card">
+  <div class="card-head">
+    <div><h2>Ubah Tarif</h2><p>Masukkan angka rupiah tanpa titik atau koma. Contoh: 10000.</p></div>
+  </div>
+  <form method="post" class="pricing-form" data-confirm="Simpan perubahan harga layanan? Tarif baru berlaku untuk nota berikutnya." data-confirm-title="Simpan harga layanan" data-confirm-ok="Ya, simpan harga">
+    {% csrf_token %}
+    {% if form.non_field_errors %}<div class="alert alert-error">{{ form.non_field_errors }}</div>{% endif %}
+    <div class="pricing-form-grid">
+      {% for field in form %}
+      <div class="field pricing-field">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        <div class="price-input-wrap"><span>Rp</span>{{ field }}<span>/kg</span></div>
+        {% if field.help_text %}<small class="field-help">{{ field.help_text }}</small>{% endif %}
+        {% for error in field.errors %}<small class="field-error">{{ error }}</small>{% endfor %}
+      </div>
+      {% endfor %}
+    </div>
+    <div class="rounding-note">
+      <strong>Aturan pembulatan total</strong>
+      <span>Hasil berat × harga/kg dengan sisa sampai Rp500 dibulatkan turun; di atas Rp500 dibulatkan naik. Contoh Rp12.300 → Rp12.000 dan Rp12.600 → Rp13.000.</span>
+    </div>
+    <div class="form-actions"><button class="btn btn-primary btn-lg" type="submit">Simpan Harga Layanan</button></div>
+  </form>
+</section>
+{% endblock %}

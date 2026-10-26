@@ -1,83 +1,84 @@
-from django.shortcuts import render, redirect
-from django.shortcuts import render, redirect, get_object_or_404
-from django.db.models import Sum
-from django.utils.timezone import now
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
+from django.db.models import Q, Sum
+from django.shortcuts import get_object_or_404, redirect, render
+from django.utils.timezone import localdate
+from django.views.decorators.http import require_POST
 
-from app.nota.models import Nota
 from .forms import NotaForm
+from .models import Nota, get_harga_layanan_map
 
-# Create your views here.
+
+@login_required
 def index(request):
-    notas = Nota.objects.all().order_by('-id')
+    return redirect("user:user_index")
 
-    context = {
-        'notas': notas
-    }
-    
-    return render(request, 'nota/dashboard.html', context)
 
+@login_required
 def nota_list(request):
-    notas = Nota.objects.all().order_by('-id')
-
-    print(notas)
-
-    return render(request, 'nota/index.html', {
-        'notas': notas
-    })
+    return redirect("nota:data_nota")
 
 
+@login_required
 def data_nota(request):
-    notas = Nota.objects.select_related('pelanggan').all().order_by('-id')
+    if request.user.is_staff or request.user.is_superuser:
+        return redirect("adminpanel:notas")
+    notas = Nota.objects.select_related("pelanggan").prefetch_related("items")
+    query = request.GET.get("q", "").strip()
+    status = request.GET.get("status", "").strip()
+    tanggal = request.GET.get("tgl", "").strip()
 
-    # tanggal hari ini
-    today = now().date()
+    if query:
+        notas = notas.filter(
+            Q(pelanggan__nama__icontains=query)
+            | Q(pelanggan__alamat__icontains=query)
+        )
+    if status in {"Belum", "Sudah"}:
+        notas = notas.filter(status=status)
+    if tanggal:
+        notas = notas.filter(tgl=tanggal)
 
-    # total nota hari ini
-    total_nota = Nota.objects.filter(tgl=today).count()
-
-    # pendapatan hari ini
-    pendapatan_hari_ini = Nota.objects.filter(tgl=today).aggregate(
-        total=Sum('harga')
-    )['total'] or 0
-
-    # total pendapatan semua
-    total_pendapatan = Nota.objects.aggregate(
-        total=Sum('harga')
-    )['total'] or 0
+    today = localdate()
+    paginator = Paginator(notas, 10)
+    page_obj = paginator.get_page(request.GET.get("page"))
 
     context = {
-        'notas': notas,
-        'total_nota': total_nota,
-        'pendapatan_hari_ini': pendapatan_hari_ini,
-        'total_pendapatan': total_pendapatan,
+        "notas": page_obj,
+        "page_obj": page_obj,
+        "query": query,
+        "status_filter": status,
+        "tanggal_filter": tanggal,
+        "total_nota_hari_ini": Nota.objects.filter(tgl=today).count(),
+        "selesai_hari_ini": Nota.objects.filter(tgl=today, status="Sudah").count(),
+        "belum_selesai": Nota.objects.filter(status="Belum").count(),
     }
-    return render(request, 'nota/data_nota.html', context)
+    return render(request, "nota/data_nota.html", context)
 
 
+@login_required
+@require_POST
 def nota_delete(request, id):
-
     nota = get_object_or_404(Nota, id=id)
     nota.delete()
+    messages.success(request, "Nota berhasil dihapus.")
+    return redirect("nota:data_nota")
 
-    return redirect('nota:data_nota')
 
-
+@login_required
 def nota_edit(request, id):
-    nota = get_object_or_404(Nota, id=id)
+    if request.user.is_staff or request.user.is_superuser:
+        return redirect("adminpanel:nota_edit", nota_id=id)
+    nota = get_object_or_404(Nota.objects.select_related("pelanggan"), id=id)
+    form = NotaForm(request.POST or None, instance=nota)
 
-    if request.method == "POST":
-        nota.nama = request.POST.get('nama')
-        nota.jenis = request.POST.get('jenis')
-        nota.berat = request.POST.get('berat')
-        nota.harga = request.POST.get('harga')
-        nota.tgl = request.POST.get('tgl')
-        nota.save()
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Nota berhasil diperbarui.")
+        return redirect("user:nota_detail", nota_id=nota.id)
 
-        return redirect('nota:data_nota')
-
-    context = {
-        'nota': nota
-    }
-
-    return render(request, 'nota/data_notaEdit.html', context)
+    return render(
+        request,
+        "nota/data_notaEdit.html",
+        {"nota": nota, "form": form, "harga_layanan": get_harga_layanan_map()},
+    )

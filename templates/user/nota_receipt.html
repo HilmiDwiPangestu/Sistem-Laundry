@@ -1,0 +1,193 @@
+{% load static laundry_extras %}
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ nota.nomor_struk }} - {{ laundry_settings.nama_usaha }}</title>
+  <link rel="icon" type="image/png" href="{% static 'img/sani-laundry-logo.png' %}">
+  <link rel="stylesheet" href="{% static 'css/receipt.css' %}?v=54">
+  <style>:root{--receipt-paper:{{ laundry_settings.lebar_kertas }}mm}@page{size:{{ laundry_settings.lebar_kertas }}mm auto;margin:0}</style>
+  <script src="{% static 'js/thermal-print.js' %}?v=54" defer></script>
+</head>
+<body class="receipt-page receipt-bundle-page" data-autoprint="{% if autoprint %}1{% else %}0{% endif %}">
+  <div class="receipt-toolbar no-print">
+    <a href="{% url 'user:nota_detail' nota.id %}" class="receipt-back">← Kembali</a>
+    <div class="receipt-toolbar-copy-links" aria-label="Pilih struk">
+      <a class="{% if selected_copy == 'all' %}active{% endif %}" href="?copy=all">Semua</a>
+      <a class="{% if selected_copy == 'customer' %}active{% endif %}" href="?copy=customer">Konsumen</a>
+      <a class="{% if selected_copy == 'laundry' %}active{% endif %}" href="?copy=laundry">Laundry</a>
+      {% if has_items %}<a class="{% if selected_copy == 'items' %}active{% endif %}" href="?copy=items">Item</a>{% endif %}
+    </div>
+    <div class="receipt-toolbar-actions">
+      <span>{{ laundry_settings.lebar_kertas }} mm</span>
+      <button type="button" data-print-browser>{% if selected_copy == 'all' %}Cetak Langsung (Kasir · Driver Windows, {{ receipt_count }}){% else %}Cetak Langsung (Kasir · Driver Windows){% endif %}</button>
+      <button type="button" class="receipt-toolbar-secondary" data-print-bluetooth>Bluetooth Android (BLE - Layout)</button>
+    </div>
+    <p class="receipt-print-hint no-print">Cetak Langsung (Kasir · Driver Windows) menggunakan jalur cetak browser/driver yang sama agar desain, ukuran huruf, catatan item, dan jarak konsisten. Dialog cetak Windows akan terbuka. Bluetooth Android tetap memakai jalur BLE/ESC-POS dan dapat memiliki perbedaan hasil.</p>
+    <p class="receipt-print-status no-print" data-print-status role="status" aria-live="polite" hidden></p>
+  </div>
+
+  {% if selected_copy == 'items' and not has_items %}
+  <div class="receipt-empty-message">
+    <strong>Struk item belum tersedia.</strong>
+    <span>Tambahkan minimal satu jenis pakaian pada nota terlebih dahulu.</span>
+    <a href="{% url 'user:nota_detail' nota.id %}">Kembali ke detail nota</a>
+  </div>
+  {% endif %}
+
+  <div class="receipt-bundle">
+    {% if selected_copy == 'all' or selected_copy == 'customer' %}
+    <main class="thermal-receipt receipt-copy receipt-copy-customer" aria-label="Struk konsumen {{ nota.nomor_struk }}">
+      <header class="thermal-brand">
+        {% if laundry_settings.tampilkan_logo %}<img src="{% static 'img/sani-laundry-logo.png' %}" alt="Logo {{ laundry_settings.nama_usaha }}">{% endif %}
+        <h1>{{ laundry_settings.nama_usaha }}</h1>
+        {% if laundry_settings.slogan %}<p class="brand-tagline">{{ laundry_settings.slogan }}</p>{% endif %}
+        {% if laundry_settings.alamat %}<p>{{ laundry_settings.alamat }}</p>{% endif %}
+        {% if laundry_settings.telepon %}<p>Telp/WA: {{ laundry_settings.telepon }}</p>{% endif %}
+      </header>
+
+      <div class="receipt-title">
+        <strong>BUKTI TRANSAKSI</strong>
+        <span>{{ nota.nomor_struk }}</span>
+      </div>
+
+      <section class="receipt-section">
+        <h2>Informasi Transaksi</h2>
+        <dl class="receipt-detail-list">
+          <div><dt>Tanggal</dt><dd>{{ nota.tgl|date:"d/m/Y" }}</dd></div>
+          <div><dt>Pelanggan</dt><dd>{{ nota.pelanggan.nama }}</dd></div>
+          <div><dt>Kasir</dt><dd>{{ request.user.get_full_name|default:request.user.username }}</dd></div>
+        </dl>
+      </section>
+
+      <section class="receipt-section">
+        <h2>Informasi Layanan</h2>
+        <dl class="receipt-detail-list">
+          <div><dt>Jenis laundry</dt><dd>{{ nota.get_jenis_display }}</dd></div>
+          <div><dt>Kecepatan</dt><dd>{{ nota.get_layanan_display }}</dd></div>
+          <div><dt>Berat</dt><dd>{{ nota.berat|kg }}</dd></div>
+          {% if nota.harga_per_kg %}<div><dt>Tarif</dt><dd>{{ nota.harga_per_kg|rupiah }}/kg</dd></div>{% endif %}
+          
+        </dl>
+      </section>
+
+      <section class="receipt-section receipt-payment">
+        <h2>Ringkasan Pembayaran</h2>
+        <dl class="receipt-detail-list payment-list">
+          {% if nota.harga_sebelum_pembulatan %}<div><dt>Subtotal</dt><dd>{{ nota.harga_sebelum_pembulatan|rupiah }}</dd></div>{% endif %}
+        </dl>
+        <div class="thermal-grand-total"><span>Total</span><strong>{{ nota.harga|rupiah }}</strong></div>
+      </section>
+
+      <footer class="thermal-footer">
+        {% if laundry_settings.footer_struk %}<p class="footer-message">{{ laundry_settings.footer_struk|truncatechars:45 }}</p>{% endif %}
+        <div class="footer-divider"></div>
+        <small>{{ laundry_settings.nama_usaha }} · {{ nota.nomor_struk }} · KONSUMEN</small>
+      </footer>
+      {% if selected_copy == 'all' %}<div class="receipt-cut-line"><span>Potong di sini</span></div>{% endif %}
+    </main>
+    {% endif %}
+
+    {% if selected_copy == 'all' or selected_copy == 'laundry' %}
+    <main class="thermal-receipt receipt-copy receipt-copy-laundry" aria-label="Struk arsip laundry {{ nota.nomor_struk }}">
+      <header class="thermal-brand thermal-brand-compact">
+        {% if laundry_settings.tampilkan_logo %}<img src="{% static 'img/sani-laundry-logo.png' %}" alt="Logo {{ laundry_settings.nama_usaha }}">{% endif %}
+        <h1>{{ laundry_settings.nama_usaha }}</h1>
+        {% if laundry_settings.telepon %}<p>Telp/WA: {{ laundry_settings.telepon }}</p>{% endif %}
+      </header>
+
+      <div class="receipt-title">
+        <strong>ARSIP TRANSAKSI</strong>
+        <span>{{ nota.nomor_struk }}</span>
+      </div>
+
+      <section class="receipt-section">
+        <h2>Data Nota</h2>
+        <dl class="receipt-detail-list">
+          <div><dt>Tanggal</dt><dd>{{ nota.tgl|date:"d/m/Y" }}</dd></div>
+          <div><dt>Pelanggan</dt><dd>{{ nota.pelanggan.nama }}</dd></div>
+          <div><dt>Kasir</dt><dd>{{ request.user.get_full_name|default:request.user.username }}</dd></div>
+          <div><dt>Jenis laundry</dt><dd>{{ nota.get_jenis_display }}</dd></div>
+          <div><dt>Kecepatan</dt><dd>{{ nota.get_layanan_display }}</dd></div>
+          <div><dt>Berat</dt><dd>{{ nota.berat|kg }}</dd></div>
+          {% if nota.harga_per_kg %}<div><dt>Tarif</dt><dd>{{ nota.harga_per_kg|rupiah }}/kg</dd></div>{% endif %}
+          {% if has_items %}<div><dt>Rincian item</dt><dd>{{ total_jenis }} jenis · {{ total_item }} pakaian</dd></div>{% endif %}
+          
+        </dl>
+      </section>
+
+      <section class="receipt-section receipt-payment">
+        <h2>Nilai Transaksi</h2>
+        <dl class="receipt-detail-list payment-list">
+          {% if nota.harga_sebelum_pembulatan %}<div><dt>Subtotal</dt><dd>{{ nota.harga_sebelum_pembulatan|rupiah }}</dd></div>{% endif %}
+        </dl>
+        <div class="thermal-grand-total"><span>Total</span><strong>{{ nota.harga|rupiah }}</strong></div>
+      </section>
+
+      <footer class="thermal-footer">
+        {% if laundry_settings.footer_struk %}<p class="footer-message">{{ laundry_settings.footer_struk|truncatechars:45 }}</p>{% endif %}
+        <div class="footer-divider"></div>
+        <small>{{ laundry_settings.nama_usaha }} · {{ nota.nomor_struk }} · LAUNDRY</small>
+      </footer>
+      {% if selected_copy == 'all' and has_items %}<div class="receipt-cut-line"><span>Potong di sini</span></div>{% endif %}
+    </main>
+    {% endif %}
+
+    {% if has_items %}
+    {% if selected_copy == 'all' or selected_copy == 'items' %}
+    <main class="thermal-receipt receipt-copy receipt-copy-items" aria-label="Struk item pakaian {{ nota.nomor_struk }}">
+      <header class="thermal-brand thermal-brand-compact">
+        {% if laundry_settings.tampilkan_logo %}<img src="{% static 'img/sani-laundry-logo.png' %}" alt="Logo {{ laundry_settings.nama_usaha }}">{% endif %}
+        <h1>{{ laundry_settings.nama_usaha }}</h1>
+      </header>
+
+      <div class="receipt-title">
+        <strong>RINCIAN PAKAIAN</strong>
+        <span>{{ nota.nomor_struk }}</span>
+      </div>
+
+      <section class="receipt-section">
+        <h2>Identitas Cucian</h2>
+        <dl class="receipt-detail-list">
+          <div><dt>Pelanggan</dt><dd>{{ nota.pelanggan.nama }}</dd></div>
+          <div><dt>Tanggal</dt><dd>{{ nota.tgl|date:"d/m/Y" }}</dd></div>
+          <div><dt>Jenis laundry</dt><dd>{{ nota.get_jenis_display }}</dd></div>
+          <div><dt>Kecepatan</dt><dd>{{ nota.get_layanan_display }}</dd></div>
+          <div><dt>Berat</dt><dd>{{ nota.berat|kg }}</dd></div>
+        </dl>
+      </section>
+
+      <section class="receipt-section thermal-items">
+        <div class="section-heading-row"><h2>Daftar Item</h2><span>{{ total_jenis }} jenis · {{ total_item }} item</span></div>
+        <div class="receipt-item-table" role="table" aria-label="Daftar pakaian">
+          {% for item in items %}
+          <div class="receipt-item-row" role="row">
+            <span class="receipt-item-bullet" aria-hidden="true">•</span>
+            <strong class="receipt-item-qty" role="cell">{{ item.jumlah }}</strong>
+            <div class="receipt-item-name" role="cell">
+              <strong>{{ item.get_jenis_display }}</strong>
+              {% if item.catatan %}<small>Catatan: {{ item.catatan }}</small>{% endif %}
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </section>
+
+      <section class="receipt-section receipt-item-total">
+        <div><span>Total jenis</span><strong>{{ total_jenis }}</strong></div>
+        <div><span>Total pakaian</span><strong>{{ total_item }} item</strong></div>
+      </section>
+
+      <footer class="thermal-footer">
+        {% if laundry_settings.footer_struk %}<p class="footer-message">{{ laundry_settings.footer_struk|truncatechars:45 }}</p>{% endif %}
+        <div class="footer-divider"></div>
+        <small>{{ laundry_settings.nama_usaha }} · {{ nota.nomor_struk }} · ITEM</small>
+      </footer>
+    </main>
+    {% endif %}
+    {% endif %}
+  </div>
+
+</body>
+</html>

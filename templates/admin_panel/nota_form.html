@@ -1,0 +1,52 @@
+{% extends 'admin_panel/base.html' %}
+{% block title %}{% if mode == 'create' %}Buat Nota{% else %}Edit Nota{% endif %}{% endblock %}
+{% block page_heading %}{% if mode == 'create' %}Buat Nota{% else %}Edit Nota{% endif %}{% endblock %}
+{% block content %}
+<section class="admin-page-head"><div><a class="back-link" href="{% if nota %}{% url 'adminpanel:nota_detail' nota.id %}{% else %}{% url 'adminpanel:notas' %}{% endif %}">← Kembali</a><span class="admin-kicker">Operasional admin</span><h1>{% if mode == 'create' %}Buat Nota Baru{% else %}Edit {{ nota.nomor_struk }}{% endif %}</h1><p>Form ini tetap berada di Admin Center dan tidak mengalihkan admin ke panel karyawan.</p></div></section>
+
+<section class="admin-panel-card admin-form-narrow admin-form-card-wide">
+  <form method="post" class="admin-editor-form" data-admin-transaction-form>
+    {% csrf_token %}
+    {% if form.non_field_errors %}<div class="alert alert-error">{{ form.non_field_errors }}</div>{% endif %}
+
+    {% if mode == 'create' %}
+    <div class="admin-form-section admin-form-section-first">
+      <div class="admin-panel-head"><div><span>Langkah 1</span><h2>Pelanggan</h2></div></div>
+      <div class="field admin-radio-field">{{ form.mode_pelanggan.label_tag }}{{ form.mode_pelanggan }}{% for error in form.mode_pelanggan.errors %}<small class="field-error">{{ error }}</small>{% endfor %}</div>
+      <div class="admin-customer-mode" data-admin-customer-old>
+        <div class="field">{{ form.pelanggan.label_tag }}{{ form.pelanggan }}{% for error in form.pelanggan.errors %}<small class="field-error">{{ error }}</small>{% endfor %}</div>
+      </div>
+      <div class="admin-form-grid-2 admin-customer-mode" data-admin-customer-new>
+        <div class="field">{{ form.nama_baru.label_tag }}{{ form.nama_baru }}{% for error in form.nama_baru.errors %}<small class="field-error">{{ error }}</small>{% endfor %}</div>
+        <div class="field">{{ form.jenis_plggn_baru.label_tag }}{{ form.jenis_plggn_baru }}{% for error in form.jenis_plggn_baru.errors %}<small class="field-error">{{ error }}</small>{% endfor %}</div>
+        <div class="field field-wide">{{ form.alamat_baru.label_tag }}{{ form.alamat_baru }}{% for error in form.alamat_baru.errors %}<small class="field-error">{{ error }}</small>{% endfor %}</div>
+      </div>
+    </div>
+    {% endif %}
+
+    <div class="admin-form-section {% if mode == 'edit' %}admin-form-section-first{% endif %}">
+      <div class="admin-panel-head"><div><span>{% if mode == 'create' %}Langkah 2{% else %}Data transaksi{% endif %}</span><h2>Layanan Laundry</h2></div></div>
+      <div class="admin-form-grid-2">
+        <div class="field">{{ form.berat.label_tag }}{{ form.berat }}{% for error in form.berat.errors %}<small class="field-error">{{ error }}</small>{% endfor %}</div>
+        <div class="field">{{ form.tgl.label_tag }}{{ form.tgl }}{% for error in form.tgl.errors %}<small class="field-error">{{ error }}</small>{% endfor %}</div>
+        <div class="field">{{ form.jenis.label_tag }}{{ form.jenis }}{% for error in form.jenis.errors %}<small class="field-error">{{ error }}</small>{% endfor %}</div>
+        <div class="field">{{ form.layanan.label_tag }}{{ form.layanan }}{% for error in form.layanan.errors %}<small class="field-error">{{ error }}</small>{% endfor %}</div>
+      </div>
+    </div>
+
+    <div class="admin-sticky-save"><a class="btn btn-ghost" href="{% if nota %}{% url 'adminpanel:nota_detail' nota.id %}{% else %}{% url 'adminpanel:notas' %}{% endif %}">Batal</a><button class="btn btn-primary" type="submit">{% if mode == 'create' %}Simpan Nota{% else %}Simpan Perubahan{% endif %}</button></div>
+  </form>
+</section>
+
+{% if mode == 'create' %}
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  const radios=[...document.querySelectorAll('input[name="mode_pelanggan"]')];
+  const oldBox=document.querySelector('[data-admin-customer-old]');
+  const newBox=document.querySelector('[data-admin-customer-new]');
+  function sync(){const value=(radios.find(r=>r.checked)||{}).value||'lama'; if(oldBox) oldBox.hidden=value!=='lama'; if(newBox) newBox.hidden=value!=='baru';}
+  radios.forEach(r=>r.addEventListener('change',sync)); sync();
+});
+</script>
+{% endif %}
+{% endblock %}

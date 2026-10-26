@@ -237,6 +237,15 @@
                         Hapus
                       </button>
                     </form>
+
+                    <form action="#" method="post">
+                      {% csrf_token %}
+                      <button type="submit" class="flex items-center gap-1 text-xs bg-blue-50 text-blue-600 px-3 py-1.5 rounded-lg hover:bg-red-100">
+                        <span class="material-symbols-outlined text-[16px]">edit_square</span>
+                        Edit
+                      </button>
+                    </form>
+                    
                   </div>
                 </td>
               </tr>

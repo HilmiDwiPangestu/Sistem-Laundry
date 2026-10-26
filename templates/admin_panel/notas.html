@@ -1,0 +1,36 @@
+{% extends 'admin_panel/base.html' %}
+{% load laundry_extras %}
+{% block title %}Kelola Nota{% endblock %}
+{% block page_heading %}Kelola Nota{% endblock %}
+{% block content %}
+<section class="admin-page-head">
+  <div><span class="admin-kicker">Operasional</span><h1>Kelola Nota</h1><p>Semua transaksi dapat dicari dan dikelola langsung dari Admin Center.</p></div>
+  <div class="admin-head-actions"><a class="btn btn-primary" href="{% url 'adminpanel:nota_create' %}">+ Nota Baru</a></div>
+</section>
+
+<section class="admin-stat-grid admin-stat-grid-3">
+  <article><span>Nota hari ini</span><strong>{{ total_nota_hari_ini }}</strong><small>transaksi masuk</small></article>
+  <article><span>Belum selesai</span><strong>{{ belum_selesai }}</strong><small>masih diproses</small></article>
+  <article><span>Pendapatan hari ini</span><strong class="admin-stat-money">{{ pendapatan_hari_ini|rupiah }}</strong><small>rekap admin</small></article>
+</section>
+
+<section class="admin-panel-card admin-filter-card">
+  <form method="get" class="admin-filter-grid">
+    <div class="field"><label for="q">Pelanggan</label><input class="form-control" id="q" name="q" value="{{ query }}" placeholder="Cari nama atau alamat"></div>
+    <div class="field"><label for="status">Status</label><select class="form-select" id="status" name="status"><option value="">Semua</option><option value="Belum" {% if status_filter == 'Belum' %}selected{% endif %}>Belum selesai</option><option value="Sudah" {% if status_filter == 'Sudah' %}selected{% endif %}>Selesai</option></select></div>
+    <div class="field"><label for="tgl">Tanggal</label><input class="form-control" type="date" id="tgl" name="tgl" value="{{ tanggal_filter }}"></div>
+    <div class="admin-filter-actions"><button class="btn btn-secondary" type="submit">Terapkan</button><a class="btn btn-ghost" href="{% url 'adminpanel:notas' %}">Reset</a></div>
+  </form>
+</section>
+
+<section class="admin-note-grid">
+  {% for n in notas %}
+  <article class="admin-note-card">
+    <div class="admin-note-head"><div><span>{{ n.nomor_struk }}</span><h3>{{ n.pelanggan.nama }}</h3><small>{{ n.tgl|date:"d M Y" }}</small></div><span class="badge {% if n.status == 'Sudah' %}badge-success{% else %}badge-warning{% endif %}">{{ n.get_status_display }}</span></div>
+    <div class="admin-note-meta"><div><span>Jenis laundry</span><strong>{{ n.get_jenis_display }}</strong></div><div><span>Kecepatan</span><strong>{{ n.get_layanan_display }}</strong></div><div><span>Berat</span><strong>{{ n.berat|kg }}</strong></div><div><span>Total</span><strong>{{ n.harga|rupiah }}</strong></div></div>
+    <div class="admin-note-actions"><a class="btn btn-secondary btn-sm" href="{% url 'adminpanel:nota_detail' n.id %}">Kelola</a><a class="btn btn-ghost btn-sm" target="_blank" rel="noopener" href="{% url 'user:nota_receipt' n.id %}?autoprint=1">Cetak</a></div>
+  </article>
+  {% empty %}<div class="empty-card"><strong>Nota tidak ditemukan.</strong><span>Ubah filter atau buat nota baru.</span></div>{% endfor %}
+</section>
+{% include 'components/pagination.html' with page_obj=page_obj %}
+{% endblock %}

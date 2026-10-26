@@ -1,0 +1,20 @@
+{% extends 'admin_panel/base.html' %}
+{% block title %}{% if mode == 'create' %}Tambah Karyawan{% else %}Edit Karyawan{% endif %}{% endblock %}
+{% block page_heading %}Karyawan{% endblock %}
+{% block content %}
+<section class="admin-page-head"><div><span class="admin-kicker">Akun internal</span><h1>{% if mode == 'create' %}Tambah karyawan baru.{% else %}Edit akun {{ employee.username }}.{% endif %}</h1><p>Akun ini digunakan untuk membuat nota, mengelola pelanggan, item pakaian, dan pekerjaan operasional.</p></div></section>
+<section class="admin-panel-card admin-form-narrow">
+  <form method="post" class="form-stack">
+    {% csrf_token %}
+    {% for field in form %}
+    <div class="field {% if field.field.widget.input_type == 'checkbox' %}admin-check-field{% endif %}">
+      {% if field.field.widget.input_type == 'checkbox' %}<label>{{ field }} <span>{{ field.label }}</span></label>{% else %}<label for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{% endif %}
+      {% if field.help_text %}<small class="form-help">{{ field.help_text|safe }}</small>{% endif %}
+      {% for error in field.errors %}<small class="field-error">{{ error }}</small>{% endfor %}
+    </div>
+    {% endfor %}
+    {% for error in form.non_field_errors %}<div class="alert alert-error">{{ error }}</div>{% endfor %}
+    <div class="form-actions"><a class="btn btn-secondary" href="{% url 'adminpanel:employees' %}">Kembali</a><button class="btn btn-primary" type="submit">{% if mode == 'create' %}Buat Akun Karyawan{% else %}Simpan Perubahan{% endif %}</button></div>
+  </form>
+</section>
+{% endblock %}

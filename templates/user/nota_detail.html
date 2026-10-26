@@ -1,0 +1,118 @@
+{% extends 'layouts/base.html' %}
+{% load static laundry_extras %}
+{% block title %}{{ nota.nomor_struk }} - Sani Laundry{% endblock %}
+{% block content %}
+<section class="receipt-head receipt-head-compact">
+  <div class="receipt-brand print-only">
+    <img src="{% static 'img/sani-laundry-logo.png' %}" alt="Sani Laundry">
+    <div><strong>Sani Laundry</strong><span>Nota Laundry</span></div>
+  </div>
+  <div>
+    <a class="back-link no-print" href="{% url 'nota:data_nota' %}">← Kembali ke daftar nota</a>
+    <p class="eyebrow no-print">Detail transaksi</p>
+    <h1>{{ nota.nomor_struk }}</h1>
+    <p>{{ nota.tgl|date:"d F Y" }} · <strong>{{ nota.pelanggan.nama }}</strong></p>
+  </div>
+  <div class="receipt-actions no-print">
+    <a class="btn btn-primary" href="{% url 'user:nota_receipt' nota.id %}?copy=all&amp;autoprint=1" target="_blank" rel="noopener" data-receipt-all-button>Cetak <span data-receipt-count>{% if total_jenis %}3{% else %}2{% endif %}</span> Struk</a>
+    <a class="btn btn-ghost" href="{% url 'user:nota_receipt' nota.id %}?copy=all" target="_blank" rel="noopener">Preview Struk</a>
+    <a class="btn btn-ghost" href="{% url 'nota:nota_edit' nota.id %}">Edit</a>
+    <form method="post" action="{% url 'user:nota_selesai' nota.id %}" data-confirm="{% if nota.status == 'Sudah' %}Buka kembali nota ini ke status belum selesai?{% else %}Tandai nota ini sebagai selesai?{% endif %}" data-confirm-title="Ubah status nota" data-confirm-ok="Ya, ubah status">
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{% url 'user:nota_detail' nota.id %}">
+      <button class="btn {% if nota.status == 'Sudah' %}btn-secondary{% else %}btn-primary{% endif %}" type="submit">
+        {% if nota.status == 'Sudah' %}Buka Kembali{% else %}Tandai Selesai{% endif %}
+      </button>
+    </form>
+    <form class="receipt-delete-form" method="post" action="{% url 'user:hapus_nota' nota.id %}" data-confirm="Hapus nota {{ nota.nomor_struk }} atas nama {{ nota.pelanggan.nama }}? Data nota dan seluruh rincian pakaiannya akan dihapus permanen." data-confirm-title="Hapus nota?" data-confirm-ok="Ya, hapus" data-confirm-icon="warning">
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{% url 'nota:data_nota' %}">
+      <button class="btn btn-danger-ghost" type="submit">Hapus Nota</button>
+    </form>
+  </div>
+</section>
+
+<section class="receipt-summary card receipt-summary-compact">
+  <div><span>Pelanggan</span><strong>{{ nota.pelanggan.nama }}</strong><small>{{ nota.pelanggan.get_jenis_plggn_display }}</small></div>
+  <div><span>Jenis laundry</span><strong>{{ nota.get_jenis_display }}</strong><small>Kecepatan: {{ nota.get_layanan_display }}</small></div>
+  <div><span>Berat</span><strong>{{ nota.berat|kg }}</strong><small>{{ total_item }} pakaian tercatat</small></div>
+  <div><span>Total</span><strong>{{ nota.harga|rupiah }}</strong><small>{% if nota.harga_per_kg %}{{ nota.harga_per_kg|rupiah }}/kg{% else %}Harga nota lama{% endif %}</small></div>
+  <div><span>Status</span><strong class="status-text {% if nota.status == 'Sudah' %}is-done{% endif %}">{{ nota.get_status_display }}</strong><small>{% if nota.status == 'Sudah' %}Siap diserahkan{% else %}Masih diproses{% endif %}</small></div>
+</section>
+
+{% if nota.harga_per_kg %}
+<section class="price-breakdown card price-breakdown-compact">
+  <div><span>Tarif</span><strong>{{ nota.harga_per_kg|rupiah }}/kg</strong></div>
+  <div><span>Hitungan</span><strong>{{ nota.berat|kg }} × {{ nota.harga_per_kg|rupiah }}</strong></div>
+  <div><span>Sebelum bulat</span><strong>{{ nota.harga_sebelum_pembulatan|rupiah }}</strong></div>
+  <div class="price-breakdown-total"><span>Total akhir</span><strong>{{ nota.harga|rupiah }}</strong></div>
+</section>
+{% endif %}
+
+<div class="item-workspace item-workspace-simple no-print">
+  {% include "components/clothing_cart.html" %}
+
+  <section class="card item-list-card item-list-card-simple">
+    <div class="card-head item-list-head simple-list-head">
+      <div>
+        <p class="eyebrow">Isi nota</p>
+        <h2><span data-items-kind-count>{{ total_jenis }}</span> jenis · <span data-items-total>{{ total_item }}</span> pakaian</h2>
+      </div>
+      <div class="item-list-head-actions">
+        {% if total_jenis %}<a class="btn btn-secondary btn-sm" href="{% url 'user:nota_receipt' nota.id %}?copy=items&amp;autoprint=1" target="_blank" rel="noopener" data-item-receipt-action>Cetak Struk Item</a>{% endif %}
+        <a class="btn btn-ghost btn-sm" href="{% url 'user:user_index' %}">Selesai</a>
+      </div>
+    </div>
+
+    <div class="item-list item-list-simple" data-item-list aria-live="polite">
+      {% for item in items %}
+      <div class="item-row-simple" data-item-row data-item-id="{{ item.id }}">
+        <div class="item-row-copy">
+          <strong>{{ item.get_jenis_display }}</strong>
+          {% if item.catatan %}<small>{{ item.catatan }}</small>{% endif %}
+        </div>
+        <div class="item-qty-control" aria-label="Jumlah {{ item.get_jenis_display }}">
+          <form class="item-qty-form" method="post" action="{% url 'user:ubah_jumlah_item' nota.id item.id %}" data-item-qty-form>
+            {% csrf_token %}
+            <input type="hidden" name="delta" value="-1">
+            <button class="item-qty-btn item-qty-minus" type="submit" aria-label="Kurangi {{ item.get_jenis_display }} satu">
+              <span aria-hidden="true">−</span>
+            </button>
+          </form>
+          <strong class="item-qty-value" data-item-qty-value aria-label="Jumlah saat ini {{ item.jumlah }}">{{ item.jumlah }}</strong>
+          <form class="item-qty-form" method="post" action="{% url 'user:ubah_jumlah_item' nota.id item.id %}" data-item-qty-form>
+            {% csrf_token %}
+            <input type="hidden" name="delta" value="1">
+            <button class="item-qty-btn item-qty-plus" type="submit" aria-label="Tambah {{ item.get_jenis_display }} satu">
+              <span aria-hidden="true">+</span>
+            </button>
+          </form>
+        </div>
+      </div>
+      {% empty %}
+      {% endfor %}
+      <div class="empty-state item-empty-state simple-item-empty{% if items %} is-hidden{% endif %}" data-item-empty>
+        <strong>Belum ada pakaian</strong>
+        <span>Pilih pakaian dari keranjang di atas. Rincian pakaian tetap bisa ditambahkan kapan saja.</span>
+      </div>
+    </div>
+
+    <div class="item-list-total simple-list-total{% if not items %} is-hidden{% endif %}" data-item-total-row>
+      <span>Total pakaian</span><strong><span data-items-total>{{ total_item }}</span> item</strong>
+    </div>
+    <p class="simple-list-help{% if not items %} is-hidden{% endif %}" data-item-list-help>Tip: tekan <b>−</b> saat jumlah tinggal 1 untuk menghapus item.</p>
+    {% include "components/pagination.html" with page_obj=page_obj %}
+  </section>
+</div>
+
+<section class="print-items print-only">
+  <h2>Rincian Pakaian</h2>
+  {% if print_items %}
+  <table>
+    <thead><tr><th>No</th><th>Jenis</th><th>Jumlah</th><th>Catatan</th></tr></thead>
+    <tbody>{% for item in print_items %}<tr><td>{{ forloop.counter }}</td><td>{{ item.get_jenis_display }}</td><td>{{ item.jumlah }}</td><td>{{ item.catatan|default:"-" }}</td></tr>{% endfor %}</tbody>
+  </table>
+  {% else %}<p>Tidak ada rincian pakaian.</p>{% endif %}
+  <p class="print-thanks">Terima kasih telah menggunakan Sani Laundry.</p>
+</section>
+{% endblock %}

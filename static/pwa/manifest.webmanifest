@@ -1,0 +1,83 @@
+{
+  "id": "/",
+  "name": "Sani Laundry",
+  "short_name": "Sani Laundry",
+  "description": "Sani Laundry: website publik, panel karyawan, dan Admin Center.",
+  "lang": "id-ID",
+  "start_url": "/login/redirect/",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": [
+    "standalone",
+    "minimal-ui"
+  ],
+  "orientation": "any",
+  "background_color": "#f6f4ef",
+  "theme_color": "#f3df00",
+  "categories": [
+    "business",
+    "productivity"
+  ],
+  "icons": [
+    {
+      "src": "/static/pwa/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/static/pwa/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/static/pwa/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Buat Nota Baru",
+      "short_name": "Nota Baru",
+      "description": "Buat transaksi laundry baru",
+      "url": "/karyawan/transaksi/baru/",
+      "icons": [
+        {
+          "src": "/static/pwa/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Daftar Nota",
+      "short_name": "Daftar Nota",
+      "description": "Buka daftar transaksi laundry",
+      "url": "/karyawan/nota/data/",
+      "icons": [
+        {
+          "src": "/static/pwa/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Admin Center",
+      "short_name": "Admin",
+      "description": "Buka pusat kontrol admin",
+      "url": "/admin-panel/",
+      "icons": [
+        {
+          "src": "/static/pwa/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  "prefer_related_applications": false
+}

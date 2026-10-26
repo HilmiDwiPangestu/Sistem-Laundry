@@ -1,0 +1,32 @@
+{% extends 'admin_panel/base.html' %}
+{% load laundry_extras %}
+{% block title %}Layanan Operasional{% endblock %}
+{% block page_heading %}Layanan Operasional{% endblock %}
+{% block content %}
+<section class="admin-page-head">
+  <div><span class="admin-kicker">Operasional internal</span><h1>Kelola operasional tanpa keluar dari Admin Center.</h1><p>Nota, pelanggan, status pekerjaan, dan akses laporan dikelola dari area admin yang terpisah dari panel karyawan.</p></div>
+  <div class="admin-head-actions"><a class="btn btn-primary" href="{% url 'adminpanel:nota_create' %}">+ Buat Nota</a></div>
+</section>
+
+<section class="admin-stat-grid admin-stat-grid-operations">
+  <article><span>Nota hari ini</span><strong>{{ nota_hari_ini }}</strong><small>transaksi masuk</small></article>
+  <article><span>Belum selesai</span><strong>{{ belum_selesai }}</strong><small>perlu ditindaklanjuti</small></article>
+  <article><span>Selesai hari ini</span><strong>{{ selesai_hari_ini }}</strong><small>pekerjaan selesai</small></article>
+  <article><span>Pelanggan</span><strong>{{ total_pelanggan }}</strong><small>data tersimpan</small></article>
+</section>
+
+<section class="admin-operation-grid">
+  <a class="admin-operation-card" href="{% url 'adminpanel:notas' %}"><span>▤</span><div><strong>Kelola Nota</strong><small>Cari, edit, ubah status, cetak, dan hapus nota.</small></div><b>→</b></a>
+  <a class="admin-operation-card" href="{% url 'adminpanel:customers' %}"><span>◉</span><div><strong>Kelola Pelanggan</strong><small>Tambah dan perbarui data pelanggan laundry.</small></div><b>→</b></a>
+  <a class="admin-operation-card" href="{% url 'adminpanel:reports' %}"><span>▥</span><div><strong>Laporan & Keuangan</strong><small>Rekap pendapatan dan download laporan transaksi.</small></div><b>→</b></a>
+</section>
+
+<section class="admin-panel-card">
+  <div class="admin-panel-head"><div><span>Aktivitas terkini</span><h2>Nota terbaru</h2></div><a href="{% url 'adminpanel:notas' %}">Semua nota</a></div>
+  <div class="admin-recent-table">
+    {% for n in recent_notas %}
+    <a href="{% url 'adminpanel:nota_detail' n.id %}" class="admin-recent-row"><strong>{{ n.nomor_struk }}</strong><span>{{ n.pelanggan.nama }}</span><span>{{ n.get_jenis_display }}</span><b>{{ n.harga|rupiah }}</b><small>{{ n.get_status_display }}</small></a>
+    {% empty %}<div class="empty-state">Belum ada transaksi.</div>{% endfor %}
+  </div>
+</section>
+{% endblock %}

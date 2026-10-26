@@ -1,0 +1,44 @@
+{% extends 'admin_panel/base.html' %}
+{% load laundry_extras %}
+{% block title %}{{ nota.nomor_struk }}{% endblock %}
+{% block page_heading %}Detail Nota{% endblock %}
+{% block content %}
+<section class="admin-page-head admin-detail-head">
+  <div><a class="back-link" href="{% url 'adminpanel:notas' %}">← Kembali ke Kelola Nota</a><span class="admin-kicker">{{ nota.tgl|date:"d F Y" }}</span><h1>{{ nota.nomor_struk }}</h1><p>{{ nota.pelanggan.nama }} · {{ nota.get_jenis_display }} · {{ nota.get_layanan_display }}</p></div>
+  <div class="admin-head-actions"><a class="btn btn-secondary" href="{% url 'adminpanel:nota_edit' nota.id %}">Edit Nota</a><a class="btn btn-primary" target="_blank" rel="noopener" href="{% url 'user:nota_receipt' nota.id %}?copy=all&amp;autoprint=1">Cetak Struk</a></div>
+</section>
+
+<section class="admin-detail-summary">
+  <article><span>Pelanggan</span><strong>{{ nota.pelanggan.nama }}</strong><small>{{ nota.pelanggan.get_jenis_plggn_display }}</small></article>
+  <article><span>Berat</span><strong>{{ nota.berat|kg }}</strong><small>{{ total_item }} pakaian</small></article>
+  <article><span>Tarif</span><strong>{% if nota.harga_per_kg %}{{ nota.harga_per_kg|rupiah }}/kg{% else %}-{% endif %}</strong><small>{{ nota.get_layanan_display }}</small></article>
+  <article><span>Total</span><strong>{{ nota.harga|rupiah }}</strong><small>nilai transaksi</small></article>
+  <article><span>Status</span><strong>{{ nota.get_status_display }}</strong><small>{{ total_jenis }} jenis pakaian</small></article>
+</section>
+
+{% include "components/clothing_cart.html" %}
+
+<section class="admin-grid-2 admin-detail-grid">
+  <article class="admin-panel-card">
+    <div class="admin-panel-head"><div><span>Rincian</span><h2>Item Pakaian</h2></div><span class="badge">{{ total_item }} item</span></div>
+    <div class="admin-item-list">
+      {% for item in items %}<div><span><strong>{{ item.get_jenis_display }}</strong>{% if item.catatan %}<small>{{ item.catatan }}</small>{% endif %}</span><b>{{ item.jumlah }}×</b></div>{% empty %}<div class="empty-state">Belum ada rincian pakaian.</div>{% endfor %}
+    </div>
+    {% include 'components/pagination.html' with page_obj=page_obj %}
+  </article>
+
+  <article class="admin-panel-card admin-action-card">
+    <div class="admin-panel-head"><div><span>Kontrol nota</span><h2>Aksi Admin</h2></div></div>
+    <div class="admin-action-stack">
+      <form method="post" action="{% url 'adminpanel:nota_status' nota.id %}" data-confirm="Ubah status {{ nota.nomor_struk }}?" data-confirm-title="Ubah status nota" data-confirm-ok="Ya, ubah">
+        {% csrf_token %}<button class="btn btn-primary btn-block" type="submit">{% if nota.status == 'Sudah' %}Buka Kembali Nota{% else %}Tandai Selesai{% endif %}</button>
+      </form>
+      <a class="btn btn-secondary btn-block" href="{% url 'adminpanel:nota_edit' nota.id %}">Edit Data Nota</a>
+      <a class="btn btn-ghost btn-block" target="_blank" rel="noopener" href="{% url 'user:nota_receipt' nota.id %}?copy=all">Preview 3 Struk</a>
+      <form method="post" action="{% url 'adminpanel:nota_delete' nota.id %}" data-confirm="Hapus nota {{ nota.nomor_struk }}? Seluruh rincian pakaian ikut terhapus permanen." data-confirm-title="Hapus nota?" data-confirm-ok="Ya, hapus" data-confirm-icon="warning">
+        {% csrf_token %}<button class="btn btn-danger-ghost btn-block" type="submit">Hapus Nota</button>
+      </form>
+    </div>
+  </article>
+</section>
+{% endblock %}
